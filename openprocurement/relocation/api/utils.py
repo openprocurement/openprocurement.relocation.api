@@ -1,0 +1,63 @@
+# -*- coding: utf-8 -*-
+from functools import partial
+from pkg_resources import get_distribution
+from logging import getLogger
+from cornice.resource import resource
+from schematics.exceptions import ModelValidationError
+from openprocurement.api.utils import error_handler, context_unpack
+from openprocurement.api.models import get_now
+
+from openprocurement.relocation.api.traversal import factory
+from openprocurement.relocation.api.models import Transfer
+
+
+transferresource = partial(resource, error_handler=error_handler,
+                           factory=factory)
+
+PKG = get_distribution(__package__)
+LOGGER = getLogger(PKG.project_name)
+
+
+def extract_transfer(request):
+    db = request.registry.db
+    transfer_id = request.matchdict['transfer_id']
+    doc = db.get(transfer_id)
+    if doc is None or doc.get('doc_type') != 'Transfer':
+        request.errors.add('url', 'transfer_id', 'Not Found')
+        request.errors.status = 404
+        raise error_handler(request.errors)
+
+    return request.transfer_from_data(doc)
+
+
+def transfer_from_data(request, data, raise_error=True, create=True):
+    if create:
+        return Transfer(data)
+    return Transfer
+
+
+def save_transfer(request):
+    """ Save transfer object to database
+    :param request:
+    :return: True if Ok
+    """
+    transfer = request.validated['transfer']
+    try:
+        transfer.store(request.registry.db)
+    except ModelValidationError, e:  # pragma: no cover
+        for i in e.message:
+            request.errors.add('body', i, e.message[i])
+        request.errors.status = 422
+    except Exception, e:  # pragma: no cover
+        request.errors.add('body', 'data', str(e))
+    else:
+        LOGGER.info('Saved transfer {}: at {}'.format(
+            transfer.id, get_now().isoformat()),
+            extra=context_unpack(request, {'MESSAGE_ID': 'save_transfer'}))
+        return True
+
+
+def set_ownership(item, request, access_token=None, transfer_token=None):
+    item.owner = request.authenticated_userid
+    item.access_token = access_token
+    item.transfer_token = transfer_token
