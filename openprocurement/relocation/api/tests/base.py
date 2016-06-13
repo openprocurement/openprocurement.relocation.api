@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 import os
+import unittest
+import webtest
 from copy import deepcopy
 from datetime import datetime
-from openprocurement.api.tests.base import BaseWebTest
 
+from openprocurement.api.tests.base import PrefixedRequestClass
 now = datetime.now()
 
 
-class BaseTransferWebTest(BaseWebTest):
-    initial_data = {}
+class BaseWebTest(unittest.TestCase):
+    """Base Web Test to test openprocurement.relocation.api.
+
+    It setups the database before each test and delete it after.
+    """
+    initial_auth = ('Basic', ('broker', ''))
 
     def setUp(self):
-        super(BaseTransferWebTest, self).setUp()
+        self.app = webtest.TestApp(
+            "config:tests.ini", relative_to=os.path.dirname(__file__))
+        self.app.RequestClass = PrefixedRequestClass
         self.app.authorization = self.initial_auth
-        self.create_transfer()
-
-    def create_transfer(self):
-        data = deepcopy(self.initial_data)
-
-        response = self.app.post_json('/transfers', {'data': data})
-        self.access = response.json['access']
-        self.transfer = response.json['data']
-        self.transfer_id = self.transfer['id']
+        self.couchdb_server = self.app.app.registry.couchdb_server
+        self.db = self.app.app.registry.db
 
     def tearDown(self):
-        del self.db[self.transfer_id]
-        super(BaseTransferWebTest, self).tearDown()
+        del self.couchdb_server[self.db.name]
