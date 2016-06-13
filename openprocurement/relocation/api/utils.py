@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from functools import partial
+from hashlib import sha512
 from pkg_resources import get_distribution
 from logging import getLogger
 from cornice.resource import resource
@@ -59,5 +60,5 @@ def save_transfer(request):
 
 def set_ownership(item, request, access_token=None, transfer_token=None):
     item.owner = request.authenticated_userid
-    item.access_token = access_token
-    item.transfer_token = transfer_token
+    item.access_token = sha512(access_token).hexdigest()
+    item.transfer_token = sha512(transfer_token).hexdigest()
