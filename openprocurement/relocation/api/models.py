@@ -23,8 +23,8 @@ class Transfer(SchematicsDocument, Model):
         }
 
     owner = StringType(min_length=1)
-    access_token = StringType(min_length=1)
-    transfer_token = StringType(min_length=1)
+    access_token = StringType(min_length=1, default=lambda: uuid4().hex)
+    transfer_token = StringType(min_length=1, default=lambda: uuid4().hex)
     usedFor = StringType()
 
     create_accreditation = 3

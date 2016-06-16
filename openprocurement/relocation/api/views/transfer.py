@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from openprocurement.api.utils import generate_id
 from openprocurement.relocation.api.validation import validate_transfer_data
 from openprocurement.relocation.api.utils import (
     transferresource, save_transfer, set_ownership
@@ -23,8 +22,8 @@ class TransferResource(APIResource):
     def collection_post(self):
         transfer = self.request.validated['transfer']
 
-        access_token = generate_id()
-        transfer_token = generate_id()
+        access_token = transfer.access_token
+        transfer_token = transfer.transfer_token
         set_ownership(transfer, self.request, access_token=access_token,
                       transfer_token=transfer_token)
 
