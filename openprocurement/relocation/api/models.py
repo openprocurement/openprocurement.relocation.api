@@ -9,7 +9,9 @@ from schematics.types.compound import ModelType, DictType
 from schematics.types.serializable import serializable
 from schematics.exceptions import ValidationError
 from schematics.transforms import whitelist, blacklist
-from openprocurement.api.models import Model, plain_role, schematics_default_role
+from openprocurement.api.models import (
+    Model, plain_role, get_now, schematics_default_role, IsoDateTimeType
+)
 
 
 class Transfer(SchematicsDocument, Model):
@@ -19,12 +21,13 @@ class Transfer(SchematicsDocument, Model):
             'plain': plain_role,
             'default': schematics_default_role,
             'create': whitelist(),
-            'view': whitelist('id', 'doc_id', 'usedFor'),
+            'view': whitelist('id', 'doc_id', 'date', 'usedFor'),
         }
 
     owner = StringType(min_length=1)
     access_token = StringType(min_length=1, default=lambda: uuid4().hex)
     transfer_token = StringType(min_length=1, default=lambda: uuid4().hex)
+    date = IsoDateTimeType(default=get_now)
     usedFor = StringType()
 
     create_accreditation = 3
