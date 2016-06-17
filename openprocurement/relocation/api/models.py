@@ -28,7 +28,7 @@ class Transfer(SchematicsDocument, Model):
     access_token = StringType(min_length=1, default=lambda: uuid4().hex)
     transfer_token = StringType(min_length=1, default=lambda: uuid4().hex)
     date = IsoDateTimeType(default=get_now)
-    usedFor = StringType()
+    usedFor = StringType(min_length=32)  # object path (e.g. /tenders/{id})
 
     create_accreditation = 3
 
