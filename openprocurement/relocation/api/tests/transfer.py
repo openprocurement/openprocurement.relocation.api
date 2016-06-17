@@ -3,8 +3,9 @@ import unittest
 from uuid import uuid4
 from copy import deepcopy
 
+from openprocurement.api.tests.base import test_tender_data
 from openprocurement.relocation.api.models import Transfer
-from openprocurement.relocation.api.tests.base import BaseWebTest
+from openprocurement.relocation.api.tests.base import BaseWebTest, OwnershipWebTest
 
 test_transfer_data = {}
 
@@ -70,7 +71,6 @@ class TransferResourceTest(BaseWebTest):
         response = self.app.get('/transfers/{}'.format("1234" * 8), status=404)
         self.assertEqual(response.status, '404 Not Found')
 
-        from openprocurement.api.tests.base import test_tender_data
         orig_auth = self.app.authorization
         self.app.authorization = ('Basic', ('broker1', ''))
         response = self.app.post_json('/tenders', {"data": test_tender_data})
@@ -145,6 +145,59 @@ class TransferResourceTest(BaseWebTest):
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit transfer creation', u'location': u'transfer', u'name': u'accreditation'}
         ])
+
+
+class TransferResourceTest(OwnershipWebTest):
+    initial_data = test_tender_data
+
+    def test_change_ownership(self):
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id), {"data": {"id": 12} }, status=422)
+        self.assertEqual(response.status, '422 Unprocessable Entity')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'This field is required.', u'location': u'body', u'name': u'transfer'}
+        ])
+
+        response = self.app.get('/tenders/{}'.format(self.tender_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.json['data']['owner'], 'broker')
+
+        authorization = self.app.authorization
+        self.app.authorization = ('Basic', ('broker3', ''))
+
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+        transfer_tokens = response.json['access']
+
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': self.tender_transfer} })
+        self.assertEqual(response.status, '200 OK')
+        self.assertNotIn('transfer', response.json['data'])
+        self.assertNotIn('transfer_token', response.json['data'])
+        self.assertEqual('broker3', response.json['data']['owner'])
+
+        # broker3 can change the tender
+        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, transfer_tokens['token']),
+                                       {"data": {"description": "broker3 now can change the tender"}})
+        self.assertEqual(response.status, '200 OK')
+        self.assertNotIn('transfer', response.json['data'])
+        self.assertNotIn('transfer_token', response.json['data'])
+        self.assertIn('owner', response.json['data'])
+        self.assertEqual(response.json['data']['owner'], 'broker3')
+
+        self.app.authorization = authorization
+        # old ownfer now can`t change tender
+        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, transfer_tokens['token']),
+                                       {"data": {"description": "yummy donut"}}, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": 'fake id', 'transfer': 'fake transfer'} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
+        ])
+
 
 
 def suite():

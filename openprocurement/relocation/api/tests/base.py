@@ -5,7 +5,7 @@ import webtest
 from copy import deepcopy
 from datetime import datetime
 
-from openprocurement.api.tests.base import PrefixedRequestClass
+from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data
 now = datetime.now()
 
 
@@ -26,3 +26,18 @@ class BaseWebTest(unittest.TestCase):
 
     def tearDown(self):
         del self.couchdb_server[self.db.name]
+
+
+class OwnershipWebTest(BaseWebTest):
+
+    def setUp(self):
+        super(OwnershipWebTest, self).setUp()
+        self.create_tender()
+
+    def create_tender(self):
+        data = deepcopy(self.initial_data)
+        response = self.app.post_json('/tenders', {'data': data})
+        tender = response.json['data']
+        self.tender_token = response.json['access']['token']
+        self.tender_transfer = response.json['access']['transfer']
+        self.tender_id = tender['id']
