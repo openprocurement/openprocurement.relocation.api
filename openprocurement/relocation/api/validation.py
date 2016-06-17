@@ -15,3 +15,15 @@ def validate_transfer_data(request):
         request.errors.status = 403
         return
     return validate_data(request, model, data=data)
+
+
+def validate_ownership_data(request):
+    data = validate_json_data(request)
+
+    for field in ['id', 'transfer']:
+        if not data.get(field):
+            request.errors.add('body', field, 'This field is required.'.format(field))
+        if request.errors:
+            request.errors.status = 422
+            return
+    request.validated['ownership_data'] = data
