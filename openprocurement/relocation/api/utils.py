@@ -19,9 +19,10 @@ PKG = get_distribution(__package__)
 LOGGER = getLogger(PKG.project_name)
 
 
-def extract_transfer(request):
+def extract_transfer(request, transfer_id=None):
     db = request.registry.db
-    transfer_id = request.matchdict['transfer_id']
+    if not transfer_id:
+        transfer_id = request.matchdict['transfer_id']
     doc = db.get(transfer_id)
     if doc is None or doc.get('doc_type') != 'Transfer':
         request.errors.add('url', 'transfer_id', 'Not Found')
