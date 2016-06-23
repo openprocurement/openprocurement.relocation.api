@@ -147,7 +147,7 @@ class TransferResourceTest(BaseWebTest):
         ])
 
 
-class TransferResourceTest(OwnershipWebTest):
+class OwnershipChangeTest(OwnershipWebTest):
     initial_data = test_tender_data
 
     def test_change_ownership(self):
@@ -162,7 +162,7 @@ class TransferResourceTest(OwnershipWebTest):
         self.assertEqual(response.json['data']['owner'], 'broker')
 
         authorization = self.app.authorization
-        self.app.authorization = ('Basic', ('broker3', ''))
+        self.app.authorization = ('Basic', ('broker2', ''))
 
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
@@ -174,16 +174,16 @@ class TransferResourceTest(OwnershipWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertNotIn('transfer', response.json['data'])
         self.assertNotIn('transfer_token', response.json['data'])
-        self.assertEqual('broker3', response.json['data']['owner'])
+        self.assertEqual('broker2', response.json['data']['owner'])
 
         # broker3 can change the tender
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, transfer_tokens['token']),
-                                       {"data": {"description": "broker3 now can change the tender"}})
+                                       {"data": {"description": "broker2 now can change the tender"}})
         self.assertEqual(response.status, '200 OK')
         self.assertNotIn('transfer', response.json['data'])
         self.assertNotIn('transfer_token', response.json['data'])
         self.assertIn('owner', response.json['data'])
-        self.assertEqual(response.json['data']['owner'], 'broker3')
+        self.assertEqual(response.json['data']['owner'], 'broker2')
 
         self.app.authorization = authorization
         # old ownfer now can`t change tender
