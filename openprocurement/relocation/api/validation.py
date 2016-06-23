@@ -10,10 +10,6 @@ def validate_transfer_data(request):
     if data is None:
         return
     model = Transfer
-    if hasattr(request, 'check_accreditation') and not request.check_accreditation(model.create_accreditation):
-        request.errors.add('transfer', 'accreditation', 'Broker Accreditation level does not permit transfer creation')
-        request.errors.status = 403
-        return
     return validate_data(request, model, data=data)
 
 

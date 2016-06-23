@@ -30,8 +30,6 @@ class Transfer(SchematicsDocument, Model):
     date = IsoDateTimeType(default=get_now)
     usedFor = StringType(min_length=32)  # object path (e.g. /tenders/{id})
 
-    create_accreditation = 3
-
     def __repr__(self):
         return '<%s:%r@%r>' % (type(self).__name__, self.id, self.rev)
 
