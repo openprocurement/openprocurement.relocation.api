@@ -160,7 +160,8 @@ class OwnershipChangeTest(OwnershipWebTest):
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
         transfer = response.json['data']
-        transfer_tokens = response.json['access']
+        new_access_token = response.json['access']['token']
+        new_transfer_token = response.json['access']['transfer']
 
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
                                       {"data": {"id": transfer['id'], 'transfer': self.tender_transfer} })
@@ -170,7 +171,7 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual('broker2', response.json['data']['owner'])
 
         # broker3 can change the tender
-        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, transfer_tokens['token']),
+        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
                                        {"data": {"description": "broker2 now can change the tender"}})
         self.assertEqual(response.status, '200 OK')
         self.assertNotIn('transfer', response.json['data'])
@@ -180,7 +181,7 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         self.app.authorization = authorization
         # old ownfer now can`t change tender
-        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, transfer_tokens['token']),
+        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
                                        {"data": {"description": "yummy donut"}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
 
@@ -191,6 +192,21 @@ class OwnershipChangeTest(OwnershipWebTest):
             {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
         ])
 
+        # try to use transfer by broker without appropriate accreditation level
+        self.app.authorization = ('Basic', ('broker1', ''))
+
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+        transfer_tokens = response.json['access']
+
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Broker Accreditation level does not permit ownership activation',
+             u'location': u'procurementMethodType', u'name': u'accreditation'}
+        ])
 
 
 def suite():
