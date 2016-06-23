@@ -139,13 +139,6 @@ class TransferResourceTest(BaseWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('{\n    "', response.body)
 
-        self.app.authorization = ('Basic', ('broker1', ''))
-        response = self.app.post_json('/transfers', {"data": test_transfer_data}, status=403)
-        self.assertEqual(response.status, '403 Forbidden')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Broker Accreditation level does not permit transfer creation', u'location': u'transfer', u'name': u'accreditation'}
-        ])
-
 
 class OwnershipChangeTest(OwnershipWebTest):
     initial_data = test_tender_data
