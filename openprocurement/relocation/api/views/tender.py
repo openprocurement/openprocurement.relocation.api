@@ -8,7 +8,9 @@ from openprocurement.api.utils import (
     context_unpack
 )
 from openprocurement.relocation.api.utils import extract_transfer, update_ownership
-from openprocurement.relocation.api.validation import validate_ownership_data
+from openprocurement.relocation.api.validation import (
+    validate_ownership_data, validate_tender_accreditation_level
+)
 
 
 @opresource(name='Tender ownership',
@@ -17,7 +19,8 @@ from openprocurement.relocation.api.validation import validate_ownership_data
 class TenderResource(APIResource):
 
     @json_view(permission='create_tender',
-               validators=(validate_ownership_data,))
+               validators=(validate_tender_accreditation_level,
+                           validate_ownership_data,))
     def post(self):
         tender = self.request.validated['tender']
         data = self.request.validated['ownership_data']
