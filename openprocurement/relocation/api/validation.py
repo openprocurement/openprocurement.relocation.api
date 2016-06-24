@@ -14,14 +14,17 @@ def validate_transfer_data(request):
 
 
 def validate_ownership_data(request):
+    if request.errors:
+        # do not run validation if some errors are already detected
+        return
     data = validate_json_data(request)
 
     for field in ['id', 'transfer']:
         if not data.get(field):
             request.errors.add('body', field, 'This field is required.'.format(field))
-        if request.errors:
-            request.errors.status = 422
-            return
+    if request.errors:
+        request.errors.status = 422
+        return
     request.validated['ownership_data'] = data
 
 
