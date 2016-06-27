@@ -269,6 +269,21 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertIn('owner', response.json['data'])
         self.assertEqual(response.json['data']['owner'], 'broker2t')
 
+        # test accreditation levels are also sepatated
+        self.app.authorization = ('Basic', ('broker1t', ''))
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+
+        new_transfer_token = transfer_tokens['transfer']
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Broker Accreditation level does not permit ownership activation',
+             u'location': u'procurementMethodType', u'name': u'accreditation'}
+        ])
+
 
 def suite():
     suite = unittest.TestSuite()
