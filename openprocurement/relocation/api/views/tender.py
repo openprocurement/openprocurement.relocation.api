@@ -29,17 +29,21 @@ class TenderResource(APIResource):
         data = self.request.validated['ownership_data']
 
         if tender.transfer_token == sha512(data['transfer']).hexdigest():
-            transfer_id = data['id']
-            transfer = extract_transfer(self.request, transfer_id=transfer_id)
-            update_ownership(tender, transfer)
-            self.request.validated['tender'] = tender
+            location = self.request.route_path('Tender', tender_id=tender.id)
+            location = location[len(ROUTE_PREFIX):]  # strips /api/<version>
+            transfer = extract_transfer(self.request, transfer_id=data['id'])
+            if transfer.get('usedFor') and transfer.get('usedFor') != location:
+                self.request.errors.add('body', 'transfer', 'Transfer already used')
+                self.request.errors.status = 403
+                return
         else:
             self.request.errors.add('body', 'transfer', 'Invalid transfer')
             self.request.errors.status = 403
             return
 
-        location = self.request.route_path('Tender', tender_id=tender.id)
-        location = location[len(ROUTE_PREFIX):]  # strips /api/<version>
+        update_ownership(tender, transfer)
+        self.request.validated['tender'] = tender
+
         transfer.usedFor = location
         self.request.validated['transfer'] = transfer
         if save_transfer(self.request):
