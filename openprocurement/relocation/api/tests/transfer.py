@@ -170,6 +170,11 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertNotIn('transfer_token', response.json['data'])
         self.assertEqual('broker2', response.json['data']['owner'])
 
+        # tender location is stored in Transfer
+
+        transfer_doc = self.db.get(transfer['id'])
+        self.assertEqual(transfer_doc['usedFor'], '/tenders/' + self.tender_id)
+
         # broker3 can change the tender
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
                                        {"data": {"description": "broker2 now can change the tender"}})

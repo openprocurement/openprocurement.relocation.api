@@ -5,9 +5,12 @@ from openprocurement.api.utils import (
     opresource,
     APIResource,
     save_tender,
+    ROUTE_PREFIX,
     context_unpack
 )
-from openprocurement.relocation.api.utils import extract_transfer, update_ownership
+from openprocurement.relocation.api.utils import (
+    extract_transfer, update_ownership, save_transfer
+)
 from openprocurement.relocation.api.validation import (
     validate_ownership_data, validate_tender_accreditation_level
 )
@@ -35,9 +38,16 @@ class TenderResource(APIResource):
             self.request.errors.status = 403
             return
 
-        # TODO update transfer object
-        if save_tender(self.request):
-            self.LOGGER.info('Updated ownership of tender {}'.format(tender.id),
-                             extra=context_unpack(self.request, {'MESSAGE_ID': 'tender_ownership_update'}))
+        location = self.request.route_path('Tender', tender_id=tender.id)
+        location = location[len(ROUTE_PREFIX):]  # strips /api/<version>
+        transfer.usedFor = location
+        self.request.validated['transfer'] = transfer
+        if save_transfer(self.request):
+            self.LOGGER.info('Updated transfer relation {}'.format(transfer.id),
+                             extra=context_unpack(self.request, {'MESSAGE_ID': 'transfer_relation_update'}))
 
-            return {'data': tender.serialize('view')}
+            if save_tender(self.request):
+                self.LOGGER.info('Updated ownership of tender {}'.format(tender.id),
+                                extra=context_unpack(self.request, {'MESSAGE_ID': 'tender_ownership_update'}))
+
+                return {'data': tender.serialize('view')}
