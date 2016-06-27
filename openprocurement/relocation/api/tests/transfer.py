@@ -174,7 +174,29 @@ class OwnershipChangeTest(OwnershipWebTest):
         transfer_doc = self.db.get(transfer['id'])
         self.assertEqual(transfer_doc['usedFor'], '/tenders/' + self.tender_id)
 
-        # broker2 can change the tender
+        # try to use already applied transfer
+        self.app.authorization = authorization
+        response = self.app.post_json('/tenders', {'data': self.initial_data})
+        tender = response.json['data']
+        access = response.json['access']
+        self.app.authorization = ('Basic', ('broker2', ''))
+        response = self.app.post_json('/tenders/{}/ownership'.format(tender['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
+        ])
+        # simulate half-applied transfer activation process (i.e. transfer
+        # is successfully applied to a tender and relation is saved in transfer,
+        # but tender is not stored with new credentials)
+        transfer_doc = self.db.get(transfer['id'])
+        transfer_doc['usedFor'] = '/tenders/' + tender['id']
+        self.db.save(transfer_doc)
+        response = self.app.post_json('/tenders/{}/ownership'.format(tender['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']} }, status=200)
+        self.assertEqual('broker2', response.json['data']['owner'])
+
+        # broker2 can change the tender (first tender which created in test setup)
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
                                        {"data": {"description": "broker2 now can change the tender"}})
         self.assertEqual(response.status, '200 OK')
