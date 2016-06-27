@@ -143,7 +143,7 @@ class TransferResourceTest(BaseWebTest):
 class OwnershipChangeTest(OwnershipWebTest):
     initial_data = test_tender_data
 
-    def test_change_ownership(self):
+    def test_change_tender_ownership(self):
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id), {"data": {"id": 12} }, status=422)
         self.assertEqual(response.status, '422 Unprocessable Entity')
         self.assertEqual(response.json['errors'], [
