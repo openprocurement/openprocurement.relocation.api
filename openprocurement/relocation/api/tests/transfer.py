@@ -240,6 +240,35 @@ class OwnershipChangeTest(OwnershipWebTest):
              u'location': u'procurementMethodType', u'name': u'accreditation'}
         ])
 
+        # test level permits to change ownership for 'test' tenders
+        # first try on non-test tender
+        self.app.authorization = ('Basic', ('broker2t', ''))
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+        transfer_tokens = response.json['access']
+
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Broker Accreditation level does not permit ownership activation',
+             u'location': u'procurementMethodType', u'name': u'mode'}
+        ])
+
+        # set test mode and try to change ownership
+        self.app.authorization = ('Basic', ('administrator', ''))
+        response = self.app.patch_json('/tenders/{}'.format(self.tender_id), {'data': {'mode': 'test'}})
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.json['data']['mode'], 'test')
+
+        self.app.authorization = ('Basic', ('broker2t', ''))
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} })
+        self.assertEqual(response.status, '200 OK')
+        self.assertIn('owner', response.json['data'])
+        self.assertEqual(response.json['data']['owner'], 'broker2t')
+
 
 def suite():
     suite = unittest.TestSuite()
