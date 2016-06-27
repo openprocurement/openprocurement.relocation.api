@@ -109,6 +109,12 @@ class TransferResourceTest(BaseWebTest):
         ])
 
     def test_create_transfer(self):
+        response = self.app.post_json('/transfers', status=422)
+        self.assertEqual(response.status, '422 Unprocessable Entity')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'No JSON object could be decoded', u'location': u'body', u'name': u'data'}
+        ])
+
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
