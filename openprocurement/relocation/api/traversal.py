@@ -15,7 +15,6 @@ class Root(BaseRoot):
 
 
 def factory(request):
-    request.validated['transfer_src'] = {}
     root = Root(request)
     if not request.matchdict or not request.matchdict.get('transfer_id'):
         return root
@@ -23,7 +22,5 @@ def factory(request):
     transfer = request.transfer
     transfer.__parent__ = root
     request.validated['transfer'] = transfer
-    if request.method != 'GET':
-        request.validated['transfer_src'] = transfer.serialize('plain')
     request.validated['id'] = request.matchdict['transfer_id']
     return transfer

@@ -28,7 +28,6 @@ class TransferResource(APIResource):
                       transfer_token=transfer_token)
 
         self.request.validated['transfer'] = transfer
-        self.request.validated['transfer_src'] = {}
         if save_transfer(self.request):
             self.LOGGER.info('Created transfer {}'.format(transfer.id),
                              extra=context_unpack(

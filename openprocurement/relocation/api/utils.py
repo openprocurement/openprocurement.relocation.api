@@ -32,10 +32,8 @@ def extract_transfer(request, transfer_id=None):
     return request.transfer_from_data(doc)
 
 
-def transfer_from_data(request, data, raise_error=True, create=True):
-    if create:
-        return Transfer(data)
-    return Transfer
+def transfer_from_data(request, data):
+    return Transfer(data)
 
 
 def save_transfer(request):
