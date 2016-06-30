@@ -83,3 +83,9 @@ class TransferDocsTest(BaseWebTest):
             self.assertNotIn('transfer', response.json['data'])
             self.assertNotIn('transfer_token', response.json['data'])
             self.assertEqual('broker2', response.json['data']['owner'])
+
+        with open('docs/source/tutorial/modify-tender.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
+                                        {"data": {"description": "broker2 now can change the tender"}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['description'], 'broker2 now can change the tender')
