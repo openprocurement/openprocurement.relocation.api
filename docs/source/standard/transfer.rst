@@ -14,9 +14,8 @@ Schema
 :date:
     string, :ref:`date`, auto-generated
 
-
 :usedFor:
-    string
+    string, auto-generated
 
     Path to the object on which transfer was applied. 
     
