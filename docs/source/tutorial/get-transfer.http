@@ -1,0 +1,13 @@
+GET /api/2.2/transfers/578e6951f2b286f3154d9d7f8100c6e8 HTTP/1.0
+Authorization: Basic YnJva2VyMjo=
+Host: api-sandbox.openprocurement.org
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "date": "2016-06-30T22:12:33.477225+03:00", 
+    "id": "578e6951f2b286f3154d9d7f8100c6e8"
+  }
+}
+

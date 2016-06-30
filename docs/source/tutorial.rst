@@ -26,6 +26,11 @@ Broker which is going to take tender ownership should create a Transfer.
 
 Transfer object contains new access ``token``, and new ``transfer`` to the object on which it will be applied.
 
+Transfer can be retrieved by id:
+
+.. include:: tutorial/get-transfer.http
+   :code:
+
 Changing tender ownership
 -------------------------
 
@@ -35,6 +40,13 @@ To change tender ownership you should send POST request with data containing `id
    :code:
 
 Updated ``owner`` value indicates that ownership is successfully applied.
+
+After Transfer is applied it stores tender path in ``usedFor`` property:
+
+.. include:: tutorial/get-used-transfer.http
+   :code:
+
+'used' transfer can't be applied to any other object.
 
 Let's try to change the tender using `token` got on transfer creation:
 

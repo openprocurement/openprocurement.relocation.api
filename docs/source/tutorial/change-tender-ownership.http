@@ -1,4 +1,4 @@
-POST /api/2.2/tenders/4a10b563960f4b909967be06aedce07b/ownership HTTP/1.0
+POST /api/2.2/tenders/321d4bad14de44e9b30892550c580c1c/ownership HTTP/1.0
 Authorization: Basic YnJva2VyMjo=
 Content-Length: 100
 Content-Type: application/json
@@ -6,8 +6,8 @@ Host: api-sandbox.openprocurement.org
 DATA:
 {
   "data": {
-    "transfer": "a4eaf4224ce94e95bed102dea919c430", 
-    "id": "578e6951f2b286f3154d9d7f8100be60"
+    "transfer": "ad0ecc9ef403485085e16e8c73a0a2a2", 
+    "id": "578e6951f2b286f3154d9d7f8100c6e8"
   }
 }
 
@@ -19,8 +19,8 @@ Content-Type: application/json; charset=UTF-8
     "status": "active.enquiries", 
     "tenderID": "UA-2016-06-30-000001", 
     "tenderPeriod": {
-      "startDate": "2016-07-07T21:41:01.053571+03:00", 
-      "endDate": "2016-07-14T21:41:01.053571+03:00"
+      "startDate": "2016-07-07T22:12:32.874076+03:00", 
+      "endDate": "2016-07-14T22:12:32.874076+03:00"
     }, 
     "title": "футляри до державних нагород", 
     "minimalStep": {
@@ -51,10 +51,10 @@ Content-Type: application/json; charset=UTF-8
           "locality": "м. Київ"
         }, 
         "deliveryDate": {
-          "startDate": "2016-07-02T21:41:01.053571+03:00", 
-          "endDate": "2016-07-05T21:41:01.053571+03:00"
+          "startDate": "2016-07-02T22:12:32.874076+03:00", 
+          "endDate": "2016-07-05T22:12:32.874076+03:00"
         }, 
-        "id": "f72c7ab27f84430b92711f27aa5ace92", 
+        "id": "523e9673c9a44ab497a4ce161c7979f7", 
         "unit": {
           "code": "44617100-9", 
           "name": "item"
@@ -70,7 +70,7 @@ Content-Type: application/json; charset=UTF-8
     }, 
     "submissionMethod": "electronicAuction", 
     "numberOfBids": 0, 
-    "next_check": "2016-07-07T21:41:01.053571+03:00", 
+    "next_check": "2016-07-07T22:12:32.874076+03:00", 
     "procuringEntity": {
       "contactPoint": {
         "name": "Державне управління справами", 
@@ -92,12 +92,12 @@ Content-Type: application/json; charset=UTF-8
       }
     }, 
     "enquiryPeriod": {
-      "startDate": "2016-06-30T21:41:01.705252+03:00", 
-      "endDate": "2016-07-07T21:41:01.053571+03:00"
+      "startDate": "2016-06-30T22:12:33.429953+03:00", 
+      "endDate": "2016-07-07T22:12:32.874076+03:00"
     }, 
     "owner": "broker2", 
-    "dateModified": "2016-06-30T21:41:01.833904+03:00", 
-    "id": "4a10b563960f4b909967be06aedce07b", 
+    "dateModified": "2016-06-30T22:12:33.564303+03:00", 
+    "id": "321d4bad14de44e9b30892550c580c1c", 
     "awardCriteria": "lowestCost"
   }
 }

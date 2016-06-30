@@ -12,12 +12,12 @@ Response: 201 Created
 Content-Type: application/json; charset=UTF-8
 {
   "access": {
-    "transfer": "8a1095be54de45a684b1bb46d5c427c5", 
-    "token": "84321997ad424ae5a1be40c193f5cac2"
+    "transfer": "65dad3835fd6450ba75d8df6b6196aab", 
+    "token": "4316ea9f4f644608bc49e91cfb95eb44"
   }, 
   "data": {
-    "date": "2016-06-30T21:41:01.752346+03:00", 
-    "id": "578e6951f2b286f3154d9d7f8100be60"
+    "date": "2016-06-30T22:12:33.477225+03:00", 
+    "id": "578e6951f2b286f3154d9d7f8100c6e8"
   }
 }
 
