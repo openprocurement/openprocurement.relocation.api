@@ -66,7 +66,7 @@ class TransferDocsTest(BaseWebTest):
         owner_token = response.json['access']['token']
         orig_tender_transfer_token = response.json['access']['transfer']
 
-        self.app.authorization = ('Basic', ('broker2', ''))
+        self.app.authorization = ('Basic', ('broker1', ''))
 
         with open('docs/source/tutorial/create-transfer.http', 'w') as self.app.file_obj:
             response = self.app.post_json('/transfers', {"data": {}})
@@ -82,4 +82,4 @@ class TransferDocsTest(BaseWebTest):
             self.assertEqual(response.status, '200 OK')
             self.assertNotIn('transfer', response.json['data'])
             self.assertNotIn('transfer_token', response.json['data'])
-            self.assertEqual('broker2', response.json['data']['owner'])
+            self.assertEqual('broker1', response.json['data']['owner'])
