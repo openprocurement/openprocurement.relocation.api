@@ -3,8 +3,9 @@ import os
 import unittest
 import webtest
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 
+from openprocurement.api.utils import apply_data_patch
 from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data
 now = datetime.now()
 
@@ -41,3 +42,20 @@ class OwnershipWebTest(BaseWebTest):
         self.tender_token = response.json['access']['token']
         self.tender_transfer = response.json['access']['transfer']
         self.tender_id = tender['id']
+
+    def set_tendering_status(self):
+        data = {
+            "status": "active.tendering",
+            "enquiryPeriod": {
+                "startDate": (now - timedelta(days=10)).isoformat(),
+                "endDate": (now).isoformat()
+            },
+            "tenderPeriod": {
+                "startDate": (now).isoformat(),
+                "endDate": (now + timedelta(days=7)).isoformat()
+            }
+        }
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)

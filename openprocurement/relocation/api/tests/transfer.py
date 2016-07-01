@@ -3,7 +3,7 @@ import unittest
 from uuid import uuid4
 from copy import deepcopy
 
-from openprocurement.api.tests.base import test_tender_data
+from openprocurement.api.tests.base import test_tender_data, test_organization
 from openprocurement.relocation.api.models import Transfer
 from openprocurement.relocation.api.tests.base import BaseWebTest, OwnershipWebTest
 
@@ -284,6 +284,42 @@ class OwnershipChangeTest(OwnershipWebTest):
              u'location': u'procurementMethodType', u'name': u'accreditation'}
         ])
 
+    def test_change_bid_ownership(self):
+
+        self.set_tendering_status()
+
+        self.app.authorization = ('Basic', ('broker', ''))
+        response = self.app.post_json('/tenders/{}/bids'.format(
+            self.tender_id), {'data': {'tenderers': [test_organization], "value": {"amount": 500}}})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        bid = response.json['data']
+        bid_tokens = response.json['access']
+
+        # current owner can change his bid
+        response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], bid_tokens['token']), {"data": {'value': {"amount": 499}}})
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+
+        # other broker can't change the bid
+        response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], bid_tokens['token']), {"data": {'value': {"amount": 498}}}, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+
+        # create Transfer
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+        transfer_tokens = response.json['access']
+
+        # change bid ownership
+        response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']} })
+        self.assertEqual(response.status, '200 OK')
+
+        # new owner can change the bid using new credentials
+        response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], transfer_tokens['token']), {"data": {'value': {"amount": 495}}})
+        self.assertEqual(response.status, '200 OK')
 
 def suite():
     suite = unittest.TestSuite()
