@@ -76,6 +76,9 @@ class TransferDocsTest(BaseWebTest):
             new_access_token = response.json['access']['token']
             new_transfer_token = response.json['access']['transfer']
 
+        with open('docs/source/tutorial/get-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))
+
         with open('docs/source/tutorial/change-tender-ownership.http', 'w') as self.app.file_obj:
             response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
                                         {"data": {"id": transfer['id'], 'transfer': orig_tender_transfer_token} })
@@ -83,3 +86,12 @@ class TransferDocsTest(BaseWebTest):
             self.assertNotIn('transfer', response.json['data'])
             self.assertNotIn('transfer_token', response.json['data'])
             self.assertEqual('broker1', response.json['data']['owner'])
+
+        with open('docs/source/tutorial/get-used-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))
+
+        with open('docs/source/tutorial/modify-tender.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
+                                        {"data": {"description": "broker1 now can change the tender"}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['description'], 'broker1 now can change the tender')

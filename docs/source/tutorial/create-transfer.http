@@ -1,4 +1,4 @@
-POST /api/2.3/transfers HTTP/1.0
+POST /api/2.2/transfers HTTP/1.0
 Authorization: Basic YnJva2VyMjo=
 Content-Length: 12
 Content-Type: application/json
@@ -12,12 +12,12 @@ Response: 201 Created
 Content-Type: application/json; charset=UTF-8
 {
   "access": {
-    "transfer": "372b38fa14d84973a0646ffe6e39dd56", 
-    "token": "2c868ecc4ba44055ba8b94d4c324c7f1"
+    "transfer": "65dad3835fd6450ba75d8df6b6196aab", 
+    "token": "4316ea9f4f644608bc49e91cfb95eb44"
   }, 
   "data": {
-    "date": "2016-06-30T19:19:25.505670+03:00", 
-    "id": "36e1a99828133d3265eadcd0480874a4"
+    "date": "2016-06-30T22:12:33.477225+03:00", 
+    "id": "578e6951f2b286f3154d9d7f8100c6e8"
   }
 }
 
