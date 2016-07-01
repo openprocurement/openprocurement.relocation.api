@@ -3,6 +3,10 @@
 Tutorial
 ========
 
+When customer needs to change current broker this customer should provide new preferred broker with ``transfer`` key for an object (tender, bid, complaint, etc.). Then new broker should create `Transfer` object and send request with `Transfer` ``id`` and ``transfer`` key (received from customer) in order to change object's owner.
+
+Let's view transfer example for tender.
+
 Tender creation
 ---------------
 
@@ -11,44 +15,50 @@ At first let's create a tender:
 .. include:: tutorial/create-tender.http
    :code:
 
-Take a look at response `access` section. There is a `transfer` value which is used to change tender ownership.
+`broker` is current tender's ``owner``.
 
-Notice that `broker` is a tender owner.
+Note that response's `access` section contains a ``transfer`` key which is used to change tender ownership. 
 
+After tender's registration in CDB broker has to provide its customer with ``transfer`` key.
 
 Transfer creation
 -----------------
 
-Broker which is going to take tender ownership should create a Transfer.
+Broker that is going to become new tender owner should create a `Transfer`.
 
 .. include:: tutorial/create-transfer.http
    :code:
 
-Transfer object contains new access ``token``, and new ``transfer`` to the object on which it will be applied.
+`Transfer` object contains new access ``token`` and new ``transfer`` token for the object that will be transferred to new broker.
 
-Transfer can be retrieved by id:
+`Transfer` can be retrieved by `id`:
 
 .. include:: tutorial/get-transfer.http
    :code:
 
-Changing tender ownership
--------------------------
+Changing tender's owner
+-----------------------
 
-To change tender ownership you should send POST request with data containing `id` of Transfer and `transfer` token got from tender owner:
+Pay attention that only broker with appropriate accreditation level can become new owner. Otherwise broker will be forbidden from this action.
+
+To change tender's ownership new broker should send POST request to appropriate `/tenders/id/` with `data` section containing ``id`` of `Transfer` and ``transfer`` token received from customer:
 
 .. include:: tutorial/change-tender-ownership.http
    :code:
 
-Updated ``owner`` value indicates that ownership is successfully applied.
+Updated ``owner`` value indicates that ownership is successfully changed. 
 
-After Transfer is applied it stores tender path in ``usedFor`` property:
+Note that new broker has to provide its customer with new ``transfer`` key (generated in `Transfer` object).
+
+After `Transfer` is applied it stores tender path in ``usedFor`` property:
 
 .. include:: tutorial/get-used-transfer.http
    :code:
 
-'used' transfer can't be applied to any other object.
+'Used' `Transfer` can't be applied to any other object.
 
-Let's try to change the tender using `token` got on transfer creation:
+Let's try to change the tender using ``token`` received on `Transfer` creation:
 
 .. include:: tutorial/modify-tender.http
    :code:
+   

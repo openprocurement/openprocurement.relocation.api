@@ -17,5 +17,5 @@ Schema
 :usedFor:
     string, auto-generated
 
-    Path to the object on which transfer was applied. 
+    Path to the object to which `Transfer` was applied. 
     
