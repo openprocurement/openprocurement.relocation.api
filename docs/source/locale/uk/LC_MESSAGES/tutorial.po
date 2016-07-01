@@ -1,0 +1,150 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: openprocurement.relocation.api 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-07-01 13:52+0300\n"
+"PO-Revision-Date: 2016-07-01 17:52+0200\n"
+"Last-Translator: sorenabell <sorenabell@quintagroup.com>\n"
+"Language-Team: Ukrainian <support@quintagroup.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: ../../source/tutorial.rst:4
+msgid "Tutorial"
+msgstr "Туторіал"
+
+#: ../../source/tutorial.rst:11
+msgid "Tender creation"
+msgstr "Створення закупівлі"
+
+#: ../../source/tutorial.rst:13
+msgid "At first let's create a tender:"
+msgstr "Спочатку створимо закупівлю:"
+
+#: ../../source/tutorial.rst:25
+msgid "Transfer creation"
+msgstr "Ініціація зміни власника"
+
+#: ../../source/tutorial.rst:49
+msgid ""
+"Updated ``owner`` value indicates that ownership is successfully changed."
+msgstr ""
+"Оновлене значення властивості ``owner`` вказує, що власник закупівлі був "
+"успішно змінений."
+
+#: ../../source/tutorial.rst:53
+msgid ""
+"After `Transfer` is applied it stores tender path in ``usedFor`` property:"
+msgstr ""
+"ПІсля того, як об'єкт `Transfer` було застосовано, для нього генерується "
+"властивість ``usedFor`` (вказується шлях до об'єкта, власника якого було "
+"змінено):"
+
+#: ../../source/tutorial.rst:58
+msgid "'Used' `Transfer` can't be applied to any other object."
+msgstr ""
+"'Використаний' об'єкт `Transfer` вже не можна застосувати до "
+"іншого об'єкта. "
+
+#: ../../source/tutorial.rst:60
+msgid ""
+"Let's try to change the tender using ``token`` received on `Transfer` "
+"creation:"
+msgstr ""
+"Спробуємо змінити закупівлю за допомогою ключа ``token``, отриманого при "
+"створенні об'єкта `Transfer`."
+
+#: ../../source/tutorial.rst:6
+msgid ""
+"When customer needs to change current broker this customer should provide "
+"new preferred broker with ``transfer`` key for an object (tender, bid, "
+"complaint, etc.). Then new broker should create `Transfer` object and send "
+"request with `Transfer` ``id`` and ``transfer`` key (received from customer)"
+" in order to change object's owner."
+msgstr ""
+"Якщо клієнт хоче змінити поточний майданчик, цей клієнт повинен надати "
+"новому майданчику ключ ``transfer`` для відповідного об'єкта (закупівлі, "
+"пропозиції, скарги). Тоді новий майданчик повинен створити об'єкт `Transfer`"
+" і надіслати запит, вказавши ідентифікатор ``id`` для `Transfer` та ключ "
+"``transfer`` (отриманий від клієнта), для того, щоб змінити власника "
+"цього об'єкта."
+
+#: ../../source/tutorial.rst:8
+msgid "Let's view transfer example for tender."
+msgstr "Переглянемо приклад зміни власника для закупівлі."
+
+#: ../../source/tutorial.rst:18
+msgid "`broker` is current tender's ``owner``."
+msgstr "Майданчик `broker` є поточним власником ``owner`` закупівлі."
+
+#: ../../source/tutorial.rst:20
+msgid ""
+"Note that response's `access` section contains a ``transfer`` key which is "
+"used to change tender ownership."
+msgstr ""
+"Зверніть увагу, що секція відповіді `access` містить ключ ``transfer``, який"
+" використовується для зміни власника закупівлі."
+
+#: ../../source/tutorial.rst:22
+msgid ""
+"After tender's registration in CDB broker has to provide its customer with "
+"``transfer`` key."
+msgstr ""
+"Після реєстрація закупівлі в ЦБД майданчик повинен довести ключ ``transfer``"
+" до відома клієнта."
+
+#: ../../source/tutorial.rst:27
+msgid ""
+"Broker that is going to become new tender owner should create a `Transfer`."
+msgstr ""
+"Майданчик, ща стане новим власником закупівлі, повинен створити об'єкт "
+"`Transfer`."
+
+#: ../../source/tutorial.rst:32
+msgid ""
+"`Transfer` object contains new access ``token`` and new ``transfer`` token "
+"for the object that will be transferred to new broker."
+msgstr ""
+"Об'єкт Transfer містить новий ключ доступу до закупівлі ``token`` та новий "
+"ключ ``transfer`` для об'єкта, власник якого буде змінений."
+
+#: ../../source/tutorial.rst:34
+msgid "`Transfer` can be retrieved by `id`:"
+msgstr "Об'єкт `Transfer` можна переглянути за допомогою ідентифікатора `id`:"
+
+#: ../../source/tutorial.rst:40
+msgid "Changing tender's owner"
+msgstr "Зміна власника закупівлі"
+
+#: ../../source/tutorial.rst:42
+msgid ""
+"Pay attention that only broker with appropriate accreditation level can "
+"become new owner. Otherwise broker will be forbidden from this action."
+msgstr ""
+"Зверніть увагу, що тільки майданчик з відповідним рівнем акредитації може "
+"стати новим власником. В іншому випадку майданчику така дія буде заборонена."
+
+#: ../../source/tutorial.rst:51
+msgid ""
+"Note that new broker has to provide its customer with new ``transfer`` key "
+"(generated in `Transfer` object)."
+msgstr ""
+"Зверніть увагу, що новий майданчик повинен довести до відома клієнта новий "
+"ключ ``transfer`` (згенерований в об'єкті `Transfer`)."
+
+#: ../../source/tutorial.rst:44
+msgid ""
+"To change tender's ownership new broker should send POST request to "
+"appropriate `/tenders/id/` with `data` section containing ``id`` of "
+"`Transfer` and ``transfer`` token received from customer:"
+msgstr ""
+"Щоб змінити власника закупівлі новий майданчик повинен надіслати POST запит"
+" на відповідний  `/tenders/id/` з секцією `data`, що міститиме ідентифікатор"
+" ``id`` для `Transfer` та ключ ``transfer`` отриманий від клієнта:"
+
