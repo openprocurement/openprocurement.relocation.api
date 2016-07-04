@@ -5,10 +5,14 @@ Tutorial
 
 When customer needs to change current broker this customer should provide new preferred broker with ``transfer`` key for an object (tender, bid, complaint, etc.). Then new broker should create `Transfer` object and send request with `Transfer` ``id`` and ``transfer`` key (received from customer) in order to change object's owner.
 
+Tender ownership change
+-----------------------
+
 Let's view transfer example for tender.
 
+
 Tender creation
----------------
+~~~~~~~~~~~~~~~
 
 At first let's create a tender:
 
@@ -22,7 +26,7 @@ Note that response's `access` section contains a ``transfer`` key which is used 
 After tender's registration in CDB broker has to provide its customer with ``transfer`` key.
 
 Transfer creation
------------------
+~~~~~~~~~~~~~~~~~
 
 Broker that is going to become new tender owner should create a `Transfer`.
 
@@ -37,7 +41,7 @@ Broker that is going to become new tender owner should create a `Transfer`.
    :code:
 
 Changing tender's owner
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Pay attention that only broker with appropriate accreditation level can become new owner. Otherwise broker will be forbidden from this action.
 
