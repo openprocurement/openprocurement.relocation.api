@@ -97,6 +97,7 @@ Now `broker2` become bid owner, check if new owner is able to change the bid:
    :code:
 
 Assure that Transfer successfuly stored bid path:
+
 .. include:: tutorial/get-used-bid-transfer.http
    :code:
 
