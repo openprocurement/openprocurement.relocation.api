@@ -1,14 +1,14 @@
-GET /api/2.2/transfers/578e6951f2b286f3154d9d7f8100c6e8 HTTP/1.0
-Authorization: Basic YnJva2VyMjo=
+GET /api/2.3/transfers/a5a9d0af94cdebf91d8ea39b8702410a HTTP/1.0
+Authorization: Basic YnJva2VyMTo=
 Host: api-sandbox.openprocurement.org
 
 Response: 200 OK
 Content-Type: application/json; charset=UTF-8
 {
   "data": {
-    "date": "2016-06-30T22:12:33.477225+03:00", 
-    "id": "578e6951f2b286f3154d9d7f8100c6e8", 
-    "usedFor": "/tenders/321d4bad14de44e9b30892550c580c1c"
+    "date": "2016-07-04T19:00:54.613149+03:00", 
+    "id": "a5a9d0af94cdebf91d8ea39b8702410a", 
+    "usedFor": "/tenders/12d2efec3691480ca952e13390e8076b"
   }
 }
 
