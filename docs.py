@@ -4,8 +4,10 @@ import os
 
 import openprocurement.relocation.api.tests.base as base_test
 from copy import deepcopy
-from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data
-from openprocurement.relocation.api.tests.base import BaseWebTest
+from openprocurement.api.tests.base import (
+    PrefixedRequestClass, test_tender_data, test_organization
+)
+from openprocurement.relocation.api.tests.base import OwnershipWebTest
 from webtest import TestApp
 
 
@@ -43,7 +45,7 @@ class DumpsTestAppwebtest(TestApp):
         return resp
 
 
-class TransferDocsTest(BaseWebTest):
+class TransferDocsTest(OwnershipWebTest):
 
     def setUp(self):
         self.app = DumpsTestAppwebtest(
@@ -95,3 +97,38 @@ class TransferDocsTest(BaseWebTest):
                                         {"data": {"description": "broker1 now can change the tender"}})
             self.assertEqual(response.status, '200 OK')
             self.assertEqual(response.json['data']['description'], 'broker1 now can change the tender')
+
+        #################
+        # Bid ownership #
+        #################
+
+        self.set_tendering_status()
+
+        self.app.authorization = ('Basic', ('broker', ''))
+        with open('docs/source/tutorial/create-bid.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/bids'.format(
+                self.tender_id), {'data': {'tenderers': [test_organization], "value": {"amount": 500}}})
+            self.assertEqual(response.status, '201 Created')
+            self.assertEqual(response.content_type, 'application/json')
+            bid = response.json['data']
+            bid_tokens = response.json['access']
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+
+        with open('docs/source/tutorial/create-bid-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/transfers', {"data": {}})
+            self.assertEqual(response.status, '201 Created')
+            transfer = response.json['data']
+            transfer_tokens = response.json['access']
+
+        with open('docs/source/tutorial/change-bid-ownership.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
+                                          {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']} })
+            self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/modify-bid.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], transfer_tokens['token']), {"data": {'value': {"amount": 450}}})
+            self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/get-used-bid-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))

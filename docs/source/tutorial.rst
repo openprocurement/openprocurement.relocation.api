@@ -66,3 +66,42 @@ Let's try to change the tender using ``token`` received on `Transfer` creation:
 .. include:: tutorial/modify-tender.http
    :code:
    
+
+Bid ownership change
+--------------------
+
+Submit a bid with `broker` credentials:
+
+.. include:: tutorial/create-bid.http
+   :code:
+
+Transfer creation
+~~~~~~~~~~~~~~~~~
+
+Create separate transfer:
+
+.. include:: tutorial/create-bid-transfer.http
+   :code:
+
+Changing bid's owner
+~~~~~~~~~~~~~~~~~~~~
+
+Apply transfer to bid with `broker2` credentials:
+
+.. include:: tutorial/change-bid-ownership.http
+   :code:
+
+Now `broker2` become bid owner, check if new owner is able to change the bid:
+
+.. include:: tutorial/modify-bid.http
+   :code:
+
+Assure that Transfer successfuly stored bid path:
+.. include:: tutorial/get-used-bid-transfer.http
+   :code:
+
+
+Complaint ownership change
+--------------------------
+
+Comming soon
