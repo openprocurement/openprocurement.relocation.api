@@ -34,3 +34,5 @@ Documentation of related packages
 * `Defense open tender <http://defense.api-docs.openprocurement.org/en/latest/>`_
 
 * `Contracting API interface to OpenProcurement database <http://contracting.api-docs.openprocurement.org/en/latest/>`_
+
+* `Document service <http://documentservice.api-docs.openprocurement.org/en/latest/>`_

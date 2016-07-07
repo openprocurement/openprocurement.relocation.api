@@ -70,37 +70,46 @@ Let's try to change the tender using ``token`` received on `Transfer` creation:
 Bid ownership change
 --------------------
 
-Submit a bid with `broker` credentials:
+Let's submit a bid via current broker:
 
 .. include:: tutorial/create-bid.http
    :code:
 
+Response contains `access` section with a ``transfer`` key that can be used to change bid ownership.
+
+Current broker has to provide its customer with ``transfer`` key for the bid. Then customer can pass it to new broker.
+   
 Transfer creation
 ~~~~~~~~~~~~~~~~~
 
-Create separate transfer:
+Note that each `Transfer` can be applied only once. New broker (that is going to become new bid owner) should create separate `Transfer` for each owner change:
 
 .. include:: tutorial/create-bid-transfer.http
    :code:
 
+`Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
+   
 Changing bid's owner
 ~~~~~~~~~~~~~~~~~~~~
 
-Apply transfer to bid with `broker2` credentials:
+Pay attention that only broker with appropriate accreditation level can become new owner. Otherwise broker will be forbidden from this action.
+
+New broker should send POST request to appropriate `/tenders/id/bids/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the bid received from customer:
 
 .. include:: tutorial/change-bid-ownership.http
    :code:
 
-Now `broker2` become bid owner, check if new owner is able to change the bid:
+Now new broker became bid owner. Check whether new owner is able to change the bid:
 
 .. include:: tutorial/modify-bid.http
    :code:
+   
+New broker should provide its customer with new ``transfer`` key (received within `Transfer` object).
 
-Assure that Transfer successfuly stored bid path:
+Check whether `Transfer` object has successfuly stored bid path in ``usedFor`` property:
 
 .. include:: tutorial/get-used-bid-transfer.http
    :code:
-
 
 Complaint ownership change
 --------------------------
