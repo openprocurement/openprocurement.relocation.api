@@ -6,6 +6,10 @@ from copy import deepcopy
 from openprocurement.api.tests.base import test_tender_data, test_organization
 from openprocurement.relocation.api.models import Transfer
 from openprocurement.relocation.api.tests.base import BaseWebTest, OwnershipWebTest
+try:
+    from openprocurement.tender.openua.tests.base import test_tender_data as ua_t_data
+except ImportError:
+    ua_t_data = None
 
 test_transfer_data = {}
 
@@ -320,6 +324,40 @@ class OwnershipChangeTest(OwnershipWebTest):
         # new owner can change the bid using new credentials
         response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], transfer_tokens['token']), {"data": {'value': {"amount": 495}}})
         self.assertEqual(response.status, '200 OK')
+
+
+class OpenUAOwnershipChangeTest(BaseWebTest):
+
+    @unittest.skipUnless(ua_t_data, "UA tender is not reachable")
+    def test_ua_tender_transfer(self):
+        try:
+            from openprocurement.tender.openua.tests.base import test_tender_data as ua_t_data
+        except ImportError:
+            ua_t_data = None
+
+        response = self.app.post_json('/tenders', {"data": ua_t_data})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        tender = response.json['data']
+        tender_access_tokens = response.json['access']
+        self.assertEqual('broker', tender['owner'])
+        self.assertNotIn('transfer', tender)
+        self.tender_id = tender['id']
+
+        self.app.authorization = ('Basic', ('broker3', ''))
+
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+        new_access_token = response.json['access']['token']
+        new_transfer_token = response.json['access']['transfer']
+
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': tender_access_tokens['transfer']} })
+        self.assertEqual(response.status, '200 OK')
+        self.assertNotIn('transfer', response.json['data'])
+        self.assertNotIn('transfer_token', response.json['data'])
+        self.assertEqual('broker3', response.json['data']['owner'])
 
 def suite():
     suite = unittest.TestSuite()
