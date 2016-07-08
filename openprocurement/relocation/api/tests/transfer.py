@@ -11,6 +11,11 @@ try:
 except ImportError:
     ua_t_data = None
 
+try:
+    from openprocurement.tender.openeu.tests.base import test_tender_data as eu_t_data
+except ImportError:
+    eu_t_data = None
+
 test_transfer_data = {}
 
 
@@ -326,21 +331,16 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(response.status, '200 OK')
 
 
-class OpenUAOwnershipChangeTest(BaseWebTest):
+class BaseTenderOwnershipTest(object):
 
-    @unittest.skipUnless(ua_t_data, "UA tender is not reachable")
-    def test_ua_tender_transfer(self):
-        try:
-            from openprocurement.tender.openua.tests.base import test_tender_data as ua_t_data
-        except ImportError:
-            ua_t_data = None
-
-        response = self.app.post_json('/tenders', {"data": ua_t_data})
+    def test_tender_transfer(self):
+        response = self.app.post_json('/tenders', {"data": self.tender_test_data})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         tender = response.json['data']
         tender_access_tokens = response.json['access']
         self.assertEqual('broker', tender['owner'])
+        self.assertEqual(self.tender_type, tender['procurementMethodType'])
         self.assertNotIn('transfer', tender)
         self.tender_id = tender['id']
 
@@ -355,9 +355,29 @@ class OpenUAOwnershipChangeTest(BaseWebTest):
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
                                       {"data": {"id": transfer['id'], 'transfer': tender_access_tokens['transfer']} })
         self.assertEqual(response.status, '200 OK')
+        self.assertEqual(self.tender_type, tender['procurementMethodType'])
         self.assertNotIn('transfer', response.json['data'])
         self.assertNotIn('transfer_token', response.json['data'])
         self.assertEqual('broker3', response.json['data']['owner'])
+
+
+class OpenUAOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
+    tender_type = "aboveThresholdUA"
+    tender_test_data = ua_t_data
+
+    @unittest.skipUnless(ua_t_data, "UA tender is not reachable")
+    def test_tender_transfer(self):
+        super(OpenUAOwnershipChangeTest, self).test_tender_transfer()
+
+
+class OpenEUOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
+    tender_type = "aboveThresholdEU"
+    tender_test_data = eu_t_data
+
+    @unittest.skipUnless(eu_t_data, "EU tender is not reachable")
+    def test_ender_transfer(self):
+        super(OpenEUOwnershipChangeTest, self).test_tender_transfer()
+
 
 def suite():
     suite = unittest.TestSuite()
