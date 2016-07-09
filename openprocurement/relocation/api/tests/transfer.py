@@ -16,6 +16,14 @@ try:
 except ImportError:
     eu_t_data = None
 
+try:
+    from openprocurement.tender.limited.tests.base import (
+        test_tender_data as limited_t_data, test_tender_negotiation_data,
+        test_tender_negotiation_quick_data
+    )
+except ImportError:
+    limited_t_data = None
+
 test_transfer_data = {}
 
 
@@ -377,6 +385,27 @@ class OpenEUOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
     @unittest.skipUnless(eu_t_data, "EU tender is not reachable")
     def test_ender_transfer(self):
         super(OpenEUOwnershipChangeTest, self).test_tender_transfer()
+
+
+class LimitedOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
+    tender_type = "reporting"
+    tender_test_data = limited_t_data
+
+    @unittest.skipUnless(limited_t_data, "Limited tenders are not reachable")
+    def test_tender_transfer(self):
+        super(LimitedOwnershipChangeTest, self).test_tender_transfer()
+
+    @unittest.skipUnless(limited_t_data, "Limited tenders are not reachable")
+    def test_negotiation_tender_transfer(self):
+        self.tender_type = "negotiation"
+        self.tender_test_data = test_tender_negotiation_data
+        super(LimitedOwnershipChangeTest, self).test_tender_transfer()
+
+    @unittest.skipUnless(limited_t_data, "Limited tenders are not reachable")
+    def test_negotiation_quick_tender_transfer(self):
+        self.tender_type = "negotiation.quick"
+        self.tender_test_data = test_tender_negotiation_quick_data
+        super(LimitedOwnershipChangeTest, self).test_tender_transfer()
 
 
 def suite():
