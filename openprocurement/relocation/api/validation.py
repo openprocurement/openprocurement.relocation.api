@@ -31,12 +31,12 @@ def validate_ownership_data(request):
 def validate_accreditation_level(request, tender, level_name):
     level = getattr(type(tender), level_name)
     if not request.check_accreditation(level):
-        request.errors.add('procurementMethodType', 'accreditation', 'Broker Accreditation level does not permit ownership activation')
+        request.errors.add('procurementMethodType', 'accreditation', 'Broker Accreditation level does not permit ownership change')
         request.errors.status = 403
         return
 
     if tender.get('mode', None) is None and request.check_accreditation('t'):
-        request.errors.add('procurementMethodType', 'mode', 'Broker Accreditation level does not permit ownership activation')
+        request.errors.add('procurementMethodType', 'mode', 'Broker Accreditation level does not permit ownership change')
         request.errors.status = 403
         return
 

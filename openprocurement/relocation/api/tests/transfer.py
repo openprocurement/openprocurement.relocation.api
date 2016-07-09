@@ -245,7 +245,7 @@ class OwnershipChangeTest(OwnershipWebTest):
                                       {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Broker Accreditation level does not permit ownership activation',
+            {u'description': u'Broker Accreditation level does not permit ownership change',
              u'location': u'procurementMethodType', u'name': u'accreditation'}
         ])
 
@@ -261,7 +261,7 @@ class OwnershipChangeTest(OwnershipWebTest):
                                       {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Broker Accreditation level does not permit ownership activation',
+            {u'description': u'Broker Accreditation level does not permit ownership change',
              u'location': u'procurementMethodType', u'name': u'mode'}
         ])
 
@@ -289,7 +289,7 @@ class OwnershipChangeTest(OwnershipWebTest):
                                       {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Broker Accreditation level does not permit ownership activation',
+            {u'description': u'Broker Accreditation level does not permit ownership change',
              u'location': u'procurementMethodType', u'name': u'accreditation'}
         ])
 
@@ -376,7 +376,7 @@ class OwnershipChangeTest(OwnershipWebTest):
                                       {"data": {"id": transfer['id'], 'transfer': complaint_transfer} }, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Broker Accreditation level does not permit ownership activation',
+            {u'description': u'Broker Accreditation level does not permit ownership change',
              u'location': u'procurementMethodType', u'name': u'accreditation'}
         ])
 
