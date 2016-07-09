@@ -321,6 +321,14 @@ class OwnershipChangeTest(OwnershipWebTest):
         transfer = response.json['data']
         transfer_tokens = response.json['access']
 
+        # try to change ownership with invalid transfer token
+        response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
+        ])
+
         # change bid ownership
         response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
                                       {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']} })
@@ -329,6 +337,25 @@ class OwnershipChangeTest(OwnershipWebTest):
         # new owner can change the bid using new credentials
         response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], transfer_tokens['token']), {"data": {'value': {"amount": 495}}})
         self.assertEqual(response.status, '200 OK')
+
+        # try to use already applied transfer
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        response = self.app.post_json('/tenders/{}/bids'.format(
+            self.tender_id), {'data': {'tenderers': [test_organization], "value": {"amount": 500}}})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        bid2 = response.json['data']
+        bid2_transfer = response.json['access']['transfer']
+        self.assertNotEqual(bid['id'], bid2['id'])
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+        response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid2['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': bid2_transfer} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
+        ])
 
     def test_complaint_ownership(self):
         # submit complaint from broker
@@ -355,6 +382,14 @@ class OwnershipChangeTest(OwnershipWebTest):
         transfer = response.json['data']
         transfer_tokens = response.json['access']
 
+        # try to change ownership with invalid transfer token
+        response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
+        ])
+
         # change complaint ownership
         response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
                                       {"data": {"id": transfer['id'], 'transfer': complaint_transfer} })
@@ -369,7 +404,7 @@ class OwnershipChangeTest(OwnershipWebTest):
         # create Transfer
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
-        transfer = response.json['data']
+        transfer2 = response.json['data']
 
         # change complaint ownership
         response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
@@ -378,6 +413,25 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit ownership change',
              u'location': u'procurementMethodType', u'name': u'accreditation'}
+        ])
+
+        # try to use already applied transfer
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        response = self.app.post_json('/tenders/{}/complaints'.format(
+            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': test_organization, 'status': 'claim'}})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        complaint2 = response.json['data']
+        complaint2_transfer = response.json['access']['transfer']
+        self.assertNotEqual(complaint['id'], complaint2['id'])
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+        response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint2['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': complaint2_transfer} }, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
         ])
 
 
