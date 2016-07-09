@@ -425,7 +425,7 @@ class OpenEUOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
     tender_test_data = eu_t_data
 
     @unittest.skipUnless(eu_t_data, "EU tender is not reachable")
-    def test_ender_transfer(self):
+    def test_tender_transfer(self):
         super(OpenEUOwnershipChangeTest, self).test_tender_transfer()
 
 
