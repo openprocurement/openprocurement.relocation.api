@@ -175,6 +175,8 @@ class OwnershipChangeTest(OwnershipWebTest):
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
         transfer = response.json['data']
+        self.assertIn('date', transfer)
+        transfer_creation_date = transfer['date']
         new_access_token = response.json['access']['token']
         new_transfer_token = response.json['access']['transfer']
 
@@ -186,8 +188,11 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual('broker1', response.json['data']['owner'])
 
         # tender location is stored in Transfer
-        transfer_doc = self.db.get(transfer['id'])
-        self.assertEqual(transfer_doc['usedFor'], '/tenders/' + self.tender_id)
+        response = self.app.get('/transfers/{}'.format(transfer['id']))
+        transfer = response.json['data']
+        transfer_modification_date = transfer['date']
+        self.assertEqual(transfer['usedFor'], '/tenders/' + self.tender_id)
+        self.assertNotEqual(transfer_creation_date, transfer_modification_date)
 
         # try to use already applied transfer
         self.app.authorization = authorization
