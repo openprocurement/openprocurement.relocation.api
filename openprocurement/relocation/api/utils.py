@@ -42,6 +42,7 @@ def save_transfer(request):
     :return: True if Ok
     """
     transfer = request.validated['transfer']
+    transfer.date = get_now()
     try:
         transfer.store(request.registry.db)
     except ModelValidationError, e:  # pragma: no cover
