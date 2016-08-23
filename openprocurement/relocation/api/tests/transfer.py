@@ -5,18 +5,23 @@ from copy import deepcopy
 
 from openprocurement.api.tests.base import test_tender_data, test_organization
 from openprocurement.relocation.api.models import Transfer
-from openprocurement.relocation.api.tests.base import BaseWebTest, OwnershipWebTest
+from openprocurement.relocation.api.tests.base import BaseWebTest, OwnershipWebTest, OpenUAOwnershipWebTest, OpenEUOwnershipWebTest
 try:
-    from openprocurement.tender.openua.tests.base import test_tender_data as ua_t_data
-except ImportError:
-    ua_t_data = None
-
+    from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
+except ImportError as e:
+    print e
+    test_ua_tender_data = None
 try:
-    from openprocurement.tender.openeu.tests.base import test_tender_data as eu_t_data
-except ImportError:
-    eu_t_data = None
+    from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
+except ImportError as e:
+    print e
+    test_eu_tender_data = None
 
 test_transfer_data = {}
+test_bid_data = {'data': {'tenderers': [test_organization], "value": {"amount": 500}}}
+test_ua_bid_data = deepcopy(test_bid_data)
+test_ua_bid_data['data'].update({'selfEligible': True, 'selfQualified': True})
+test_eu_bid_data = deepcopy(test_ua_bid_data)
 
 
 class TrensferTest(BaseWebTest):
@@ -157,9 +162,18 @@ class TransferResourceTest(BaseWebTest):
 
 class OwnershipChangeTest(OwnershipWebTest):
     initial_data = test_tender_data
+    initial_bid = test_bid_data
+    owner1 = 'broker'
+    owner2 = 'broker1'
+    test_owner = 'broker1t'
+    invalid_owner = 'broker3'
+    provider1 = 'broker'
+    provider2 = 'broker2'
+    invalid_provider = 'broker4'
+    initial_auth = ('Basic', (owner1, ''))
 
     def test_change_tender_ownership(self):
-        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id), {"data": {"id": 12} }, status=422)
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id), {"data": {"id": 12}}, status=422)
         self.assertEqual(response.status, '422 Unprocessable Entity')
         self.assertEqual(response.json['errors'], [
             {u'description': u'This field is required.', u'location': u'body', u'name': u'transfer'}
@@ -167,10 +181,10 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         response = self.app.get('/tenders/{}'.format(self.tender_id))
         self.assertEqual(response.status, '200 OK')
-        self.assertEqual(response.json['data']['owner'], 'broker')
+        self.assertEqual(response.json['data']['owner'], self.owner1)
 
         authorization = self.app.authorization
-        self.app.authorization = ('Basic', ('broker1', ''))
+        self.app.authorization = ('Basic', (self.owner2, ''))
 
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
@@ -181,11 +195,11 @@ class OwnershipChangeTest(OwnershipWebTest):
         new_transfer_token = response.json['access']['transfer']
 
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": transfer['id'], 'transfer': self.tender_transfer} })
+                                      {"data": {"id": transfer['id'], 'transfer': self.tender_transfer}})
         self.assertEqual(response.status, '200 OK')
         self.assertNotIn('transfer', response.json['data'])
         self.assertNotIn('transfer_token', response.json['data'])
-        self.assertEqual('broker1', response.json['data']['owner'])
+        self.assertEqual(self.owner2, response.json['data']['owner'])
 
         # tender location is stored in Transfer
         response = self.app.get('/transfers/{}'.format(transfer['id']))
@@ -199,9 +213,9 @@ class OwnershipChangeTest(OwnershipWebTest):
         response = self.app.post_json('/tenders', {'data': self.initial_data})
         tender = response.json['data']
         access = response.json['access']
-        self.app.authorization = ('Basic', ('broker1', ''))
+        self.app.authorization = ('Basic', (self.owner2, ''))
         response = self.app.post_json('/tenders/{}/ownership'.format(tender['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
@@ -213,8 +227,8 @@ class OwnershipChangeTest(OwnershipWebTest):
         transfer_doc['usedFor'] = '/tenders/' + tender['id']
         self.db.save(transfer_doc)
         response = self.app.post_json('/tenders/{}/ownership'.format(tender['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']} }, status=200)
-        self.assertEqual('broker1', response.json['data']['owner'])
+                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']}}, status=200)
+        self.assertEqual(self.owner2, response.json['data']['owner'])
 
         # broker2 can change the tender (first tender which created in test setup)
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
@@ -223,7 +237,7 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertNotIn('transfer', response.json['data'])
         self.assertNotIn('transfer_token', response.json['data'])
         self.assertIn('owner', response.json['data'])
-        self.assertEqual(response.json['data']['owner'], 'broker1')
+        self.assertEqual(response.json['data']['owner'], self.owner2)
 
         self.app.authorization = authorization
         # old ownfer now can`t change tender
@@ -232,14 +246,14 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(response.status, '403 Forbidden')
 
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": 'fake id', 'transfer': 'fake transfer'} }, status=403)
+                                      {"data": {"id": 'fake id', 'transfer': 'fake transfer'}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
         ])
 
         # try to use transfer by broker without appropriate accreditation level
-        self.app.authorization = ('Basic', ('broker2', ''))
+        self.app.authorization = ('Basic', (self.invalid_owner, ''))
 
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
@@ -247,7 +261,7 @@ class OwnershipChangeTest(OwnershipWebTest):
         transfer_tokens = response.json['access']
 
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit ownership change',
@@ -256,14 +270,14 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         # test level permits to change ownership for 'test' tenders
         # first try on non-test tender
-        self.app.authorization = ('Basic', ('broker1t', ''))
+        self.app.authorization = ('Basic', (self.test_owner, ''))
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
         transfer = response.json['data']
         transfer_tokens = response.json['access']
 
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit ownership change',
@@ -276,22 +290,22 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.json['data']['mode'], 'test')
 
-        self.app.authorization = ('Basic', ('broker1t', ''))
+        self.app.authorization = ('Basic', (self.test_owner, ''))
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} })
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token}})
         self.assertEqual(response.status, '200 OK')
         self.assertIn('owner', response.json['data'])
-        self.assertEqual(response.json['data']['owner'], 'broker1t')
+        self.assertEqual(response.json['data']['owner'], self.test_owner)
 
         # test accreditation levels are also sepatated
-        self.app.authorization = ('Basic', ('broker2t', ''))
+        self.app.authorization = ('Basic', (self.invalid_owner, ''))
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
         transfer = response.json['data']
 
         new_transfer_token = transfer_tokens['transfer']
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit ownership change',
@@ -301,10 +315,9 @@ class OwnershipChangeTest(OwnershipWebTest):
     def test_change_bid_ownership(self):
 
         self.set_tendering_status()
-
-        self.app.authorization = ('Basic', ('broker', ''))
+        self.app.authorization = ('Basic', (self.provider1, ''))
         response = self.app.post_json('/tenders/{}/bids'.format(
-            self.tender_id), {'data': {'tenderers': [test_organization], "value": {"amount": 500}}})
+            self.tender_id), self.initial_bid)
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         bid = response.json['data']
@@ -314,7 +327,7 @@ class OwnershipChangeTest(OwnershipWebTest):
         response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], bid_tokens['token']), {"data": {'value': {"amount": 499}}})
         self.assertEqual(response.status, '200 OK')
 
-        self.app.authorization = ('Basic', ('broker2', ''))
+        self.app.authorization = ('Basic', (self.provider2, ''))
 
         # other broker can't change the bid
         response = self.app.patch_json('/tenders/{}/bids/{}?acc_token={}'.format(self.tender_id, bid['id'], bid_tokens['token']), {"data": {'value': {"amount": 498}}}, status=403)
@@ -328,15 +341,14 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         # try to change ownership with invalid transfer token
         response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
         ])
-
         # change bid ownership
         response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']} })
+                                      {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']}})
         self.assertEqual(response.status, '200 OK')
 
         # new owner can change the bid using new credentials
@@ -344,25 +356,25 @@ class OwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(response.status, '200 OK')
 
         # try to use already applied transfer
-        self.app.authorization = ('Basic', ('broker', ''))
+        self.app.authorization = ('Basic', (self.provider1, ''))
 
         response = self.app.post_json('/tenders/{}/bids'.format(
-            self.tender_id), {'data': {'tenderers': [test_organization], "value": {"amount": 500}}})
+            self.tender_id), self.initial_bid)
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         bid2 = response.json['data']
         bid2_transfer = response.json['access']['transfer']
         self.assertNotEqual(bid['id'], bid2['id'])
 
-        self.app.authorization = ('Basic', ('broker2', ''))
+        self.app.authorization = ('Basic', (self.provider2, ''))
         response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid2['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': bid2_transfer} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': bid2_transfer}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
         ])
 
-    def test_complaint_ownership(self):
+    def test_change_complaint_ownership(self):
         # submit complaint from broker
         response = self.app.post_json('/tenders/{}/complaints'.format(
             self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': test_organization, 'status': 'claim'}})
@@ -377,9 +389,9 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         # check complaint owner
         tender_doc = self.db.get(self.tender_id)
-        self.assertEqual(tender_doc['complaints'][0]['owner'], "broker")
+        self.assertEqual(tender_doc['complaints'][0]['owner'], self.provider1)
 
-        self.app.authorization = ('Basic', ('broker2', ''))
+        self.app.authorization = ('Basic', (self.provider2, ''))
 
         # create Transfer
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
@@ -389,7 +401,7 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         # try to change ownership with invalid transfer token
         response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
@@ -397,15 +409,15 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         # change complaint ownership
         response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer} })
+                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
         self.assertEqual(response.status, '200 OK')
         complaint_transfer = transfer_tokens['transfer']
 
         # check complaint owner
         tender_doc = self.db.get(self.tender_id)
-        self.assertEqual(tender_doc['complaints'][0]['owner'], "broker2")
+        self.assertEqual(tender_doc['complaints'][0]['owner'], self.provider2)
 
-        self.app.authorization = ('Basic', ('broker1', ''))
+        self.app.authorization = ('Basic', (self.invalid_provider, ''))
         # create Transfer
         response = self.app.post_json('/transfers', {"data": test_transfer_data})
         self.assertEqual(response.status, '201 Created')
@@ -413,7 +425,7 @@ class OwnershipChangeTest(OwnershipWebTest):
 
         # change complaint ownership
         response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit ownership change',
@@ -421,7 +433,7 @@ class OwnershipChangeTest(OwnershipWebTest):
         ])
 
         # try to use already applied transfer
-        self.app.authorization = ('Basic', ('broker', ''))
+        self.app.authorization = ('Basic', (self.provider1, ''))
 
         response = self.app.post_json('/tenders/{}/complaints'.format(
             self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': test_organization, 'status': 'claim'}})
@@ -431,9 +443,9 @@ class OwnershipChangeTest(OwnershipWebTest):
         complaint2_transfer = response.json['access']['transfer']
         self.assertNotEqual(complaint['id'], complaint2['id'])
 
-        self.app.authorization = ('Basic', ('broker2', ''))
+        self.app.authorization = ('Basic', (self.provider2, ''))
         response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint2['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': complaint2_transfer} }, status=403)
+                                      {"data": {"id": transfer['id'], 'transfer': complaint2_transfer}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
             {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
@@ -470,22 +482,55 @@ class BaseTenderOwnershipTest(object):
         self.assertEqual('broker3', response.json['data']['owner'])
 
 
-class OpenUAOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
+class OpenUAOwnershipChangeTest(OpenUAOwnershipWebTest, OwnershipChangeTest):
     tender_type = "aboveThresholdUA"
-    tender_test_data = ua_t_data
+    initial_data = test_ua_tender_data
+    initial_bid = test_ua_bid_data
+    owner1 = 'broker'
+    owner2 = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    provider1 = 'broker'
+    provider2 = 'broker4'
+    invalid_provider = 'broker2'
 
-    @unittest.skipUnless(ua_t_data, "UA tender is not reachable")
-    def test_tender_transfer(self):
-        super(OpenUAOwnershipChangeTest, self).test_tender_transfer()
+    @unittest.skipUnless(test_ua_tender_data, "UA tender is not reachable")
+    def test_change_tender_ownership(self):
+        super(OpenUAOwnershipChangeTest, self).test_change_tender_ownership()
+
+    @unittest.skipUnless(test_ua_tender_data, "UA tender is not reachable")
+    def test_change_bid_ownership(self):
+        super(OpenUAOwnershipChangeTest, self).test_change_bid_ownership()
+
+    @unittest.skipUnless(test_ua_tender_data, "UA tender is not reachable")
+    def test_change_complaint_ownership(self):
+        super(OpenUAOwnershipChangeTest, self).test_change_complaint_ownership()
 
 
-class OpenEUOwnershipChangeTest(BaseWebTest, BaseTenderOwnershipTest):
+
+class OpenEUOwnershipChangeTest(OpenEUOwnershipWebTest, OwnershipChangeTest):
     tender_type = "aboveThresholdEU"
-    tender_test_data = eu_t_data
+    initial_data = test_eu_tender_data
+    initial_bid = test_eu_bid_data
+    owner1 = 'broker'
+    owner2 = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    provider1 = 'broker'
+    provider2 = 'broker4'
+    invalid_provider = 'broker2'
 
-    @unittest.skipUnless(eu_t_data, "EU tender is not reachable")
-    def test_tender_transfer(self):
-        super(OpenEUOwnershipChangeTest, self).test_tender_transfer()
+    @unittest.skipUnless(test_eu_tender_data, "EU tender is not reachable")
+    def test_change_tender_ownership(self):
+        super(OpenEUOwnershipChangeTest, self).test_change_tender_ownership()
+
+    @unittest.skipUnless(test_eu_tender_data, "EU tender is not reachable")
+    def test_change_bid_ownership(self):
+        super(OpenEUOwnershipChangeTest, self).test_change_bid_ownership()
+
+    @unittest.skipUnless(test_eu_tender_data, "EU tender is not reachable")
+    def test_change_complaint_ownership(self):
+        super(OpenEUOwnershipChangeTest, self).test_change_complaint_ownership()
 
 
 def suite():
