@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from openprocurement.api.utils import apply_data_patch
 from openprocurement.api.design import sync_design
-from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data
+from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data, test_organization
 from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
 from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
 from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
@@ -17,6 +17,12 @@ from openprocurement.tender.limited.tests.base import (test_tender_data as test_
                                                        test_tender_negotiation_quick_data)
 
 test_transfer_data = {}
+
+test_bid_data = {'data': {'tenderers': [test_organization], "value": {"amount": 500}}}
+test_ua_bid_data = deepcopy(test_bid_data)
+test_ua_bid_data['data'].update({'selfEligible': True, 'selfQualified': True})
+test_uadefense_bid_data = deepcopy(test_ua_bid_data)
+test_eu_bid_data = deepcopy(test_ua_bid_data)
 
 now = datetime.now()
 
