@@ -148,6 +148,30 @@ class OpenUAOwnershipWebTest(OwnershipWebTest):
         tender.update(apply_data_patch(tender, data))
         self.db.save(tender)
 
+    def set_qualification_status(self):
+        data = {
+            "status": 'active.qualification',
+            "enquiryPeriod": {
+                "startDate": (now - timedelta(days=46)).isoformat(),
+                "endDate": (now - timedelta(days=31)).isoformat()
+            },
+            "tenderPeriod": {
+                "startDate": (now - timedelta(days=31)).isoformat(),
+                "endDate": (now - timedelta(days=1)).isoformat()
+            },
+            "auctionPeriod": {
+                "startDate": (now - timedelta(days=1)).isoformat(),
+                "endDate": (now).isoformat()
+            },
+            "awardPeriod": {
+                "startDate": (now).isoformat()
+            }
+        }
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)
+
 
 class OpenEUOwnershipWebTest(OpenUAOwnershipWebTest):
     """
