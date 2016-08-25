@@ -8,19 +8,22 @@ from openprocurement.relocation.api.models import Transfer
 from openprocurement.relocation.api.tests.base import BaseWebTest, OwnershipWebTest, OpenUAOwnershipWebTest, OpenEUOwnershipWebTest
 try:
     from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
-except ImportError as e:
-    print e
+except ImportError:
     test_ua_tender_data = None
+try:
+    from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
+except ImportError as e:
+    test_uadefense_tender_data = None
 try:
     from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
 except ImportError as e:
-    print e
     test_eu_tender_data = None
 
 test_transfer_data = {}
 test_bid_data = {'data': {'tenderers': [test_organization], "value": {"amount": 500}}}
 test_ua_bid_data = deepcopy(test_bid_data)
 test_ua_bid_data['data'].update({'selfEligible': True, 'selfQualified': True})
+test_uadefense_bid_data = deepcopy(test_ua_bid_data)
 test_eu_bid_data = deepcopy(test_ua_bid_data)
 
 
@@ -587,6 +590,35 @@ class OpenUAOwnershipChangeTest(OpenUAOwnershipWebTest, OwnershipChangeTest):
     @unittest.skipUnless(test_ua_tender_data, "UA tender is not reachable")
     def test_change_award_complaint_ownership(self):
         super(OpenUAOwnershipChangeTest, self).test_change_award_complaint_ownership()
+
+
+class OpenUADefenseOwnershipChangeTest(OpenUAOwnershipWebTest, OwnershipChangeTest):
+    tender_type = "aboveThresholdUA.defense"
+    initial_data = test_uadefense_tender_data
+    initial_bid = test_uadefense_bid_data
+    owner1 = 'broker'
+    owner2 = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    provider1 = 'broker'
+    provider2 = 'broker4'
+    invalid_provider = 'broker2'
+
+    @unittest.skipUnless(test_uadefense_tender_data, "UA.defense tender is not reachable")
+    def test_change_tender_ownership(self):
+        super(OpenUADefenseOwnershipChangeTest, self).test_change_tender_ownership()
+
+    @unittest.skipUnless(test_uadefense_tender_data, "UA.defense tender is not reachable")
+    def test_change_bid_ownership(self):
+        super(OpenUADefenseOwnershipChangeTest, self).test_change_bid_ownership()
+
+    @unittest.skipUnless(test_uadefense_tender_data, "UA.defense tender is not reachable")
+    def test_change_complaint_ownership(self):
+        super(OpenUADefenseOwnershipChangeTest, self).test_change_complaint_ownership()
+
+    @unittest.skipUnless(test_uadefense_tender_data, "UA.defense tender is not reachable")
+    def test_change_award_complaint_ownership(self):
+        super(OpenUADefenseOwnershipChangeTest, self).test_change_award_complaint_ownership()
 
 
 class OpenEUOwnershipChangeTest(OpenEUOwnershipWebTest, OwnershipChangeTest):
