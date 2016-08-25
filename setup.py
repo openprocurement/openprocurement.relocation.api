@@ -11,6 +11,10 @@ requires = [
 test_requires = requires + [
     'webtest',
     'python-coveralls',
+    'openprocurement.tender.openua',
+    'openprocurement.tender.openuadefense',
+    'openprocurement.tender.openeu',
+    'openprocurement.tender.limited',
 ]
 
 docs_requires = requires + [
