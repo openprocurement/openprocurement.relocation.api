@@ -9,6 +9,15 @@ from uuid import uuid4
 from openprocurement.api.utils import apply_data_patch
 from openprocurement.api.design import sync_design
 from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data
+from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
+from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
+from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
+from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
+                                                       test_tender_negotiation_data,
+                                                       test_tender_negotiation_quick_data)
+
+test_transfer_data = {}
+
 now = datetime.now()
 
 
@@ -105,6 +114,105 @@ class OwnershipWebTest(BaseWebTest):
                 "startDate": (now).isoformat()
             }
         }
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)
+
+
+class OpenUAOwnershipWebTest(OwnershipWebTest):
+    """
+    OpenUA Web Test to test openprocurement.relocation.api.
+    """
+
+    def set_tendering_status(self):
+        data = {
+            "status": "active.tendering",
+            "enquiryPeriod": {
+                "startDate": (now - timedelta(days=15)).isoformat(),
+                "endDate": (now).isoformat()
+            },
+            "tenderPeriod": {
+                "startDate": (now).isoformat(),
+                "endDate": (now + timedelta(days=30)).isoformat()
+            }
+        }
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)
+
+
+class OpenEUOwnershipWebTest(OpenUAOwnershipWebTest):
+    """
+    OpenEU Web Test to test openprocurement.relocation.api.
+    """
+
+    def set_qualification_status(self):
+        data = {
+            "status": 'active.qualification',
+            "enquiryPeriod": {
+                "startDate": (now - timedelta(days=46)).isoformat(),
+                "endDate": (now - timedelta(days=31)).isoformat()
+            },
+            "tenderPeriod": {
+                "startDate": (now - timedelta(days=31)).isoformat(),
+                "endDate": (now - timedelta(days=1)).isoformat()
+            },
+            "auctionPeriod": {
+                "startDate": (now - timedelta(days=1)).isoformat(),
+                "endDate": (now).isoformat()
+            },
+            "awardPeriod": {
+                "startDate": (now).isoformat()
+            }
+        }
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)
+
+    def set_auction_status(self, extra=None):
+        data = {
+            "enquiryPeriod": {
+                "startDate": (now - timedelta(days=46)).isoformat(),
+                "endDate": (now - timedelta(days=31)).isoformat()
+            },
+            "tenderPeriod": {
+                "startDate": (now - timedelta(days=31)).isoformat(),
+                "endDate": (now - timedelta(days=1)).isoformat()
+            },
+            "qualificationPeriod": {
+                "startDate": (now - timedelta(days=1)).isoformat(),
+                "endDate": (now).isoformat()
+            },
+            "auctionPeriod": {
+                "startDate": now.isoformat()
+            }
+        }
+        if extra:
+            data.update(extra)
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)
+
+    def set_pre_qualification_status(self, extra=None):
+        data = {
+            "enquiryPeriod": {
+                "startDate": (now - timedelta(days=45)).isoformat(),
+                "endDate": (now - timedelta(days=30)).isoformat()
+            },
+            "tenderPeriod": {
+                "startDate": (now - timedelta(days=30)).isoformat(),
+                "endDate": (now).isoformat(),
+            },
+            "qualificationPeriod": {
+                "startDate": (now).isoformat(),
+            }
+        }
+        if extra:
+            data.update(extra)
 
         tender = self.db.get(self.tender_id)
         tender.update(apply_data_patch(tender, data))
