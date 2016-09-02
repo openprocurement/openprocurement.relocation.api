@@ -15,6 +15,7 @@ from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu
 from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
                                                        test_tender_negotiation_data,
                                                        test_tender_negotiation_quick_data)
+from openprocurement.contracting.api.tests.base import test_contract_data
 
 test_transfer_data = {}
 
@@ -247,3 +248,21 @@ class OpenEUOwnershipWebTest(OpenUAOwnershipWebTest):
         tender = self.db.get(self.tender_id)
         tender.update(apply_data_patch(tender, data))
         self.db.save(tender)
+
+
+class ContractOwnershipWebTest(BaseWebTest):
+
+    def setUp(self):
+        super(ContractOwnershipWebTest, self).setUp()
+        self.create_contract()
+
+    def create_contract(self):
+        data = deepcopy(self.initial_data)
+
+        orig_auth = self.app.authorization
+        self.app.authorization = ('Basic', ('contracting', ''))
+        response = self.app.post_json('/contracts', {'data': data})
+        self.contract = response.json['data']
+        # self.contract_token = response.json['access']['token']
+        self.contract_id = self.contract['id']
+        self.app.authorization = orig_auth
