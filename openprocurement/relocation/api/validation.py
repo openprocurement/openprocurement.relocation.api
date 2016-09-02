@@ -49,4 +49,8 @@ def validate_bid_accreditation_level(request):
     validate_accreditation_level(request, request.validated['tender'], 'edit_accreditation')
 
 
+def validate_contract_accreditation_level(request):
+    validate_accreditation_level(request, request.validated['contract'], 'create_accreditation')
+
+
 validate_complaint_accreditation_level = validate_bid_accreditation_level
