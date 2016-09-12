@@ -114,4 +114,43 @@ Check whether `Transfer` object has successfuly stored bid path in ``usedFor`` p
 Complaint ownership change
 --------------------------
 
-Comming soon
+Let's submit a complaint via current broker:
+
+.. include:: tutorial/create-complaint.http
+   :code:
+
+Response contains `access` section with a ``transfer`` key that can be used to change complaint ownership.
+
+Current broker has to provide its customer with ``transfer`` key for the complaint. Then customer can pass it to new broker.
+
+Transfer creation
+~~~~~~~~~~~~~~~~~
+
+Note that each `Transfer` can be applied only once. New broker (that is going to become new complaint owner) should create separate `Transfer` for each owner change:
+
+.. include:: tutorial/create-complaint-transfer.http
+   :code:
+
+`Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
+
+Changing complaint's owner
+~~~~~~~~~~~~~~~~~~~~
+
+Pay attention that only broker with appropriate accreditation level can become new owner. Otherwise broker will be forbidden from this action.
+
+New broker should send POST request to appropriate `/tenders/id/complaints/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the complaint received from customer:
+
+.. include:: tutorial/change-complaint-ownership.http
+   :code:
+
+Now new broker became complaint owner. Check whether new owner is able to change the complaint:
+
+.. include:: tutorial/modify-complaint.http
+   :code:
+
+New broker should provide its customer with new ``transfer`` key (received within `Transfer` object).
+
+Check whether `Transfer` object has successfuly stored complaint path in ``usedFor`` property:
+
+.. include:: tutorial/get-used-complaint-transfer.http
+   :code:

@@ -1,0 +1,14 @@
+GET /api/2.3/transfers/51af2ddd862b84438f51c08d2502ad20 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Host: api-sandbox.openprocurement.org
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "date": "2016-09-12T14:02:32.579921+03:00", 
+    "id": "51af2ddd862b84438f51c08d2502ad20", 
+    "usedFor": "/tenders/d9755e9ef15448ec8f9de71353a12692/complaints/194e085f4f3d4d88bdbb6550a937f4d8"
+  }
+}
+

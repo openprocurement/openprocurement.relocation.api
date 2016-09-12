@@ -1,0 +1,30 @@
+PATCH /api/2.3/tenders/d9755e9ef15448ec8f9de71353a12692/complaints/194e085f4f3d4d88bdbb6550a937f4d8?acc_token=c240ed9eb96a4871b054d66e5f61c887 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 75
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "status": "cancelled", 
+    "cancellationReason": "Important reason"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "status": "cancelled", 
+    "description": "complaint description", 
+    "title": "complaint title", 
+    "cancellationReason": "Important reason", 
+    "dateCanceled": "2016-09-12T14:02:32.783062+03:00", 
+    "dateSubmitted": "2016-09-12T14:02:32.342316+03:00", 
+    "complaintID": "UA-2016-09-12-000001.1", 
+    "date": "2016-09-12T14:02:32.787637+03:00", 
+    "type": "claim", 
+    "id": "194e085f4f3d4d88bdbb6550a937f4d8"
+  }
+}
+
