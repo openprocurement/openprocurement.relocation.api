@@ -111,6 +111,46 @@ Check whether `Transfer` object has successfuly stored bid path in ``usedFor`` p
 .. include:: tutorial/get-used-bid-transfer.http
    :code:
 
+Contracting ownership change
+----------------------------
+
+Let's view transfer example for  contracting transfer.
+
+Transfer creation 
+~~~~~~~~~~~~~~~~~
+
+At the first you must know the contract id which you want to transfer
+
+Broker that is going to become new contract owner should create a `Transfer`.
+
+.. include:: tutorial/create-contract-transfer.http
+   :code:
+
+`Transfer` object contains new access ``token`` and new ``transfer`` token for the object that will be transferred to new broker.
+
+Changing contract's owner
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To change contract's ownership new broker should send POST request to appropriate `/contracts/id/` with `data` section containing ``id`` of `Transfer` and ``transfer`` token received from customer:
+
+.. include:: tutorial/change-contract-ownership.http
+   :code:
+
+Updated ``owner`` value indicates that ownership is successfully changed. 
+
+Note that new broker has to provide its customer with new ``transfer`` key (generated in `Transfer` object).
+
+After `Transfer` is applied it stores contract path in ``usedFor`` property:
+
+.. include:: tutorial/get-used-contract-transfer.http
+   :code:
+
+Let's try to change the contract using ``token`` received on `Transfer` creation:
+
+.. include:: tutorial/modify-contract.http
+   :code:
+
+   
 Complaint ownership change
 --------------------------
 
