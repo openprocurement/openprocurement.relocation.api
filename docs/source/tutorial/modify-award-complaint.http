@@ -1,0 +1,49 @@
+PATCH /api/2.3/tenders/19243d1faf904243941a9eb1a517e7c7/awards/5b8aed9a411c49c0b81e02ba17adea56/complaints/53d2ff9160924d24ab323cc3163129ca?acc_token=d08a65388caa4df0abe28ce6df54c1f9 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 75
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "status": "cancelled", 
+    "cancellationReason": "Important reason"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "status": "cancelled", 
+    "description": "complaint description", 
+    "title": "complaint title", 
+    "author": {
+      "contactPoint": {
+        "name": "Державне управління справами", 
+        "telephone": "0440000000"
+      }, 
+      "identifier": {
+        "scheme": "UA-EDR", 
+        "id": "00037256", 
+        "uri": "http://www.dus.gov.ua/"
+      }, 
+      "name": "Державне управління справами", 
+      "address": {
+        "postalCode": "01220", 
+        "countryName": "Україна", 
+        "streetAddress": "вул. Банкова, 11, корпус 1", 
+        "region": "м. Київ", 
+        "locality": "м. Київ"
+      }
+    }, 
+    "cancellationReason": "Important reason", 
+    "dateCanceled": "2016-09-12T14:16:26.365057+03:00", 
+    "dateSubmitted": "2016-09-12T14:16:25.910153+03:00", 
+    "complaintID": "UA-2016-09-12-000001.2", 
+    "date": "2016-09-12T14:16:26.369934+03:00", 
+    "type": "claim", 
+    "id": "53d2ff9160924d24ab323cc3163129ca"
+  }
+}
+

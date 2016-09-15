@@ -83,7 +83,7 @@ class TransferDocsTest(OwnershipWebTest):
 
         with open('docs/source/tutorial/change-tender-ownership.http', 'w') as self.app.file_obj:
             response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                        {"data": {"id": transfer['id'], 'transfer': orig_tender_transfer_token} })
+                                        {"data": {"id": transfer['id'], 'transfer': orig_tender_transfer_token}})
             self.assertEqual(response.status, '200 OK')
             self.assertNotIn('transfer', response.json['data'])
             self.assertNotIn('transfer_token', response.json['data'])
@@ -123,7 +123,7 @@ class TransferDocsTest(OwnershipWebTest):
 
         with open('docs/source/tutorial/change-bid-ownership.http', 'w') as self.app.file_obj:
             response = self.app.post_json('/tenders/{}/bids/{}/ownership'.format(self.tender_id, bid['id']),
-                                          {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']} })
+                                          {"data": {"id": transfer['id'], 'transfer': bid_tokens['transfer']}})
             self.assertEqual(response.status, '200 OK')
 
         with open('docs/source/tutorial/modify-bid.http', 'w') as self.app.file_obj:
@@ -131,4 +131,88 @@ class TransferDocsTest(OwnershipWebTest):
             self.assertEqual(response.status, '200 OK')
 
         with open('docs/source/tutorial/get-used-bid-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))
+
+        #######################
+        # Complaint ownership #
+        #######################
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+
+        with open('docs/source/tutorial/create-complaint.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/complaints'.format(self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': test_organization, 'status': 'claim'}})
+            self.assertEqual(response.status, '201 Created')
+            complaint = response.json['data']
+            complaint_token = response.json['access']['token']
+            complaint_transfer = response.json['access']['transfer']
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        with open('docs/source/tutorial/create-complaint-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/transfers', {"data": {}})
+            self.assertEqual(response.status, '201 Created')
+            transfer = response.json['data']
+            transfer_tokens = response.json['access']
+
+        with open('docs/source/tutorial/change-complaint-ownership.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/complaints/{}/ownership'.format(self.tender_id, complaint['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
+            self.assertEqual(response.status, '200 OK')
+            complaint_transfer = transfer_tokens['transfer']
+
+        with open('docs/source/tutorial/modify-complaint.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/tenders/{}/complaints/{}?acc_token={}'.format(self.tender_id, complaint['id'], transfer_tokens['token']), {"data": {'status': 'cancelled', 'cancellationReason': 'Important reason'}})
+            self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/get-used-complaint-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))
+
+        #############################
+        # Award complaint ownership #
+        #############################
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+
+        response = self.app.post_json('/tenders/{}/bids'.format(
+            self.tender_id), {'data': {'tenderers': [test_organization], "value": {"amount": 550}}})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        bid = response.json['data']
+        bid_tokens = response.json['access']
+
+        self.set_qualification_status()
+        self.app.authorization = ('Basic', ('token', ''))
+        response = self.app.post_json('/tenders/{}/awards'.format(
+            self.tender_id), {'data': {'suppliers': [test_organization], 'status': 'pending', 'bid_id': bid['id']}})
+        award = response.json['data']
+        self.award_id = award['id']
+
+        self.app.authorization = ('Basic', ('broker2', ''))
+
+        with open('docs/source/tutorial/create-award-complaint.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/awards/{}/complaints?acc_token={}'.format(self.tender_id, self.award_id, bid_tokens['token']), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': test_organization, 'status': 'claim'}})
+            self.assertEqual(response.status, '201 Created')
+            complaint = response.json['data']
+            complaint_token = response.json['access']['token']
+            complaint_transfer = response.json['access']['transfer']
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        with open('docs/source/tutorial/create-award-complaint-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/transfers', {"data": {}})
+            self.assertEqual(response.status, '201 Created')
+            transfer = response.json['data']
+            transfer_tokens = response.json['access']
+
+        with open('docs/source/tutorial/change-award-complaint-ownership.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/awards/{}/complaints/{}/ownership'.format(self.tender_id, self.award_id, complaint['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
+            self.assertEqual(response.status, '200 OK')
+            complaint_transfer = transfer_tokens['transfer']
+
+        with open('docs/source/tutorial/modify-award-complaint.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/tenders/{}/awards/{}/complaints/{}?acc_token={}'.format(self.tender_id, self.award_id, complaint['id'], transfer_tokens['token']), {"data": {'status': 'cancelled', 'cancellationReason': 'Important reason'}})
+            self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/get-used-award-complaint-transfer.http', 'w') as self.app.file_obj:
             response = self.app.get('/transfers/{}'.format(transfer['id']))
