@@ -7,9 +7,36 @@ from copy import deepcopy
 from openprocurement.api.tests.base import (
     PrefixedRequestClass, test_tender_data, test_organization
 )
-from openprocurement.relocation.api.tests.base import OwnershipWebTest
+from openprocurement.relocation.api.tests.base import OpenEUOwnershipWebTest, test_eu_tender_data, test_ua_bid_data, test_transfer_data
 from webtest import TestApp
 
+complaint = {
+    "data": {
+        "author": {
+            "address": {
+                "countryName": "Україна",
+                "locality": "м. Вінниця",
+                "postalCode": "21100",
+                "region": "м. Вінниця",
+                "streetAddress": "вул. Островського, 33"
+            },
+            "contactPoint": {
+                "email": "soleksuk@gmail.com",
+                "name": "Сергій Олексюк",
+                "telephone": "+380 (432) 21-69-30"
+            },
+            "identifier": {
+                "id": "13313462",
+                "legalName": "Державне комунальне підприємство громадського харчування «Школяр»",
+                "scheme": "UA-EDR",
+                "uri": "http://sch10.edu.vn.ua/"
+            },
+            "name": "ДКП «Школяр»"
+        },
+        "description": "Умови виставлені замовником не містять достатньо інформації, щоб заявка мала сенс.",
+        "title": "Недостатньо інформації"
+    }
+}
 
 class DumpsTestAppwebtest(TestApp):
     def do_request(self, req, status=None, expect_errors=None):
@@ -44,8 +71,7 @@ class DumpsTestAppwebtest(TestApp):
             self.file_obj.write("\n\n")
         return resp
 
-
-class TransferDocsTest(OwnershipWebTest):
+class TransferDocsTest(OpenEUOwnershipWebTest):
 
     def setUp(self):
         self.app = DumpsTestAppwebtest(
@@ -132,3 +158,74 @@ class TransferDocsTest(OwnershipWebTest):
 
         with open('docs/source/tutorial/get-used-bid-transfer.http', 'w') as self.app.file_obj:
             response = self.app.get('/transfers/{}'.format(transfer['id']))
+    
+        ##############################
+        # Qualification owner change #
+        ##############################
+
+        self.app.authorization = ('Basic', ('broker', ''))
+        data = deepcopy(test_eu_tender_data)
+        with open('docs/source/tutorial/create-tender-for-qualification.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders?opt_pretty=1', {"data": data})
+            self.assertEqual(response.status, '201 Created')
+            tender = response.json['data']
+            self.tender_token = response.json['access']['token']
+            self.tender_id = tender['id']    
+
+        self.set_tendering_status()
+        #broker(tender owner) create bid 
+        with open('docs/source/tutorial/create-first-bid-for-qualification.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/bids'.format(self.tender_id), test_ua_bid_data)
+            self.assertEqual(response.status, '201 Created')
+            bid1_token = response.json['access']['token']
+        
+        #broker4 create bid
+        auth = self.app.authorization
+        self.app.authorization = ('Basic', ('broker4', ''))
+        response = self.app.post_json('/tenders/{}/bids'.format(self.tender_id), test_ua_bid_data)
+        self.assertEqual(response.status, '201 Created')
+        bid2_id =   response.json['data']['id']
+        bid2_token =  response.json['access']['token']
+
+        #broker change status to pre-qualification  
+        self.set_pre_qualification_status()
+        self.app.authorization = ('Basic', ('chronograph', ''))
+        with open('docs/source/tutorial/create-first-bid-for-qualification.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/tenders/{}'.format(self.tender_id), {"data": {"id": self.tender_id}})
+            self.app.authorization = auth
+    
+        #qualifications
+        response = self.app.get('/tenders/{}/qualifications'.format(self.tender_id))
+        self.assertEqual(response.status, "200 OK")
+        qualifications = response.json['data']
+
+        for qualification in qualifications:
+            response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification['id'], self.tender_token),
+                                           {"data": {"status": "active", "qualified": True, "eligible": True}})
+            self.assertEqual(response.status, "200 OK")
+
+        # active.pre-qualification.stand-still
+        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, self.tender_token),
+                                       {"data": {"status": "active.pre-qualification.stand-still"}})
+        self.assertEqual(response.status, "200 OK")
+        self.assertEqual(response.json['data']['status'], "active.pre-qualification.stand-still")
+        qualification_id = qualifications[0]['id']
+
+        # broker4 create complaint
+        self.app.authorization = ('Basic', ('broker4', ''))
+        with open('docs/source/tutorial/create-qualification-complaint.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/qualifications/{}/complaints?acc_token={}'.format(self.tender_id, qualification_id, bid2_token), complaint)
+            self.assertEqual(response.status, '201 Created')
+            complaint_id = response.json["data"]["id"]
+            complaint_transfer = response.json['access']['transfer']
+          
+        # broker4 create Transfer
+        self.app.authorization = ('Basic', ('broker4', ''))
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+
+        with open('docs/source/tutorial/change-qualification-complaint-owner.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaint_id),
+                                          {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
+            self.assertEqual(response.status, '200 OK')
