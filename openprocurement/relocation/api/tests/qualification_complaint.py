@@ -96,6 +96,7 @@ class OpenEUQualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
         self.assertEqual(response.status, '201 Created')
         complaints = response.json["data"]
         complaint_transfer = response.json['access']['transfer']
+        print complaint_transfer
           
         # check complaint owner
         tender_doc = self.db.get(self.tender_id)
@@ -109,8 +110,7 @@ class OpenEUQualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
         transfer_tokens = response.json['access']
 
         # change complaint ownership
-        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaints['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
+        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaints['id']), {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
         self.assertEqual(response.status, '200 OK')
         complaint_transfer = transfer_tokens['transfer']
         

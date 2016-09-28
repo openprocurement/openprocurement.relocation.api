@@ -198,3 +198,44 @@ Check whether `Transfer` object has successfuly stored complaint path in ``usedF
 
 .. include:: tutorial/get-used-award-complaint-transfer.http
    :code:
+
+Qualification omplaint ownership change
+---------------------------------------
+
+At first we must create tender for qualification 
+
+.. include:: tutorial/create-tender-for-qualification.http
+   :code:
+
+Response contains tender id and `access` section with Tender token
+
+Submit a Bid
+~~~~~~~~~~~~
+
+Let's submit a bid for qualification:
+
+.. include:: tutorial/create-first-bid-for-qualification.http
+   :code:
+
+Response contains `access` section with a `token` key that can be used to create qualification complaint.
+
+Create Transfer as in the previous examples
+
+`Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
+
+Submit Complaint
+~~~~~~~~~~~~~~~~
+
+
+.. include:: tutorial/create-qualification-complaint.http
+   :code:
+
+
+
+Changing complaint's owner
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+New broker should send POST request to appropriate `/tenders/id/qualifications/id/complaints/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the complaint received from customer:
+
+.. include:: tutorial/change-qualification-complaint-owner.http
+   :code:
