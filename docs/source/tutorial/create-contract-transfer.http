@@ -1,0 +1,23 @@
+POST /api/2.3/transfers HTTP/1.0
+Authorization: Basic YnJva2VyMzo=
+Content-Length: 12
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {}
+}
+
+Response: 201 Created
+Content-Type: application/json; charset=UTF-8
+{
+  "access": {
+    "transfer": "a6afa28816874e53bbc3fde11eec0028", 
+    "token": "2bed73f61da14db9abb074b234c00c69"
+  }, 
+  "data": {
+    "date": "2016-09-14T18:22:39.222959+03:00", 
+    "id": "142974ce839c4b6cfd836abd79002f87"
+  }
+}
+
