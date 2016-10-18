@@ -3,47 +3,16 @@ import unittest
 
 from openprocurement.relocation.api.tests.base import OwnershipWebTest, OpenUAOwnershipWebTest, OpenEUOwnershipWebTest
 from openprocurement.relocation.api.tests.base import test_uadefense_tender_data, test_eu_tender_data, test_transfer_data
-from openprocurement.relocation.api.tests.base import test_eu_bid_data, test_organization
+from openprocurement.relocation.api.tests.base import test_eu_bid_data, test_organization, complaint
 
-complaint = {
-    "data": {
-        "author": {
-            "address": {
-                "countryName": "Україна",
-                "locality": "м. Вінниця",
-                "postalCode": "21100",
-                "region": "м. Вінниця",
-                "streetAddress": "вул. Островського, 33"
-            },
-            "contactPoint": {
-                "email": "soleksuk@gmail.com",
-                "name": "Сергій Олексюк",
-                "telephone": "+380 (432) 21-69-30"
-            },
-            "identifier": {
-                "id": "13313462",
-                "legalName": "Державне комунальне підприємство громадського харчування «Школяр»",
-                "scheme": "UA-EDR",
-                "uri": "http://sch10.edu.vn.ua/"
-            },
-            "name": "ДКП «Школяр»"
-        },
-        "description": "Умови виставлені замовником не містять достатньо інформації, щоб заявка мала сенс.",
-        "title": "Недостатньо інформації"
-    }
-}
+
 
 class OpenEUQualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
     tender_type = "aboveThresholdEU"
     initial_data = test_eu_tender_data
     initial_bid = test_eu_bid_data
     first_owner = 'broker'
-    second_owner = 'broker3'
-    test_owner = 'broker3t'
-    invalid_owner = 'broker1'
-    First_provider = 'broker'
     second_provider = 'broker4'
-    invalid_provider = 'broker2'
         
     def test_change_qualification_complaint_ownership(self):
 
@@ -109,11 +78,35 @@ class OpenEUQualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
         transfer = response.json['data']
         transfer_tokens = response.json['access']
 
+        # try to change ownership with invalid transfer token
+        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaints['id']),
+                                      {"data": {"id": transfer['id'], 'transfer': "fake_transfer_token"}}, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Invalid transfer', u'location': u'body', u'name': u'transfer'}
+        ])
+
         # change complaint ownership
-        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaints['id']), {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
+        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaints['id']), 
+                                       {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
         self.assertEqual(response.status, '200 OK')
         complaint_transfer = transfer_tokens['transfer']
         
         # check complaint owner
         tender_doc = self.db.get(self.tender_id)
         self.assertEqual(tender_doc['qualifications'][0]['complaints'][0]['owner'], self.second_provider)
+
+        # try to use already applied transfer
+        self.app.authorization = ('Basic', (self.first_owner, ''))
+
+        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints?acc_token={}'.format(self.tender_id, qualification_id, bid1_token), complaint)
+        self.assertEqual(response.status, '201 Created')
+        complaints = response.json["data"]
+        complaint_transfer = response.json['access']['transfer']
+
+        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaints['id']), 
+                                       {"data": {"id": transfer['id'], 'transfer': complaint_transfer}}, status = 403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
+        ])

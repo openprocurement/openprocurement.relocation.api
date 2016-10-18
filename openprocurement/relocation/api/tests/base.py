@@ -27,6 +27,33 @@ test_eu_bid_data = deepcopy(test_ua_bid_data)
 
 now = datetime.now()
 
+complaint = {
+    "data": {
+        "author": {
+            "address": {
+                "countryName": "Україна",
+                "locality": "м. Вінниця",
+                "postalCode": "21100",
+                "region": "м. Вінниця",
+                "streetAddress": "вул. Островського, 33"
+            },
+            "contactPoint": {
+                "email": "soleksuk@gmail.com",
+                "name": "Сергій Олексюк",
+                "telephone": "+380 (432) 21-69-30"
+            },
+            "identifier": {
+                "id": "13313462",
+                "legalName": "Державне комунальне підприємство громадського харчування «Школяр»",
+                "scheme": "UA-EDR",
+                "uri": "http://sch10.edu.vn.ua/"
+            },
+            "name": "ДКП «Школяр»"
+        },
+        "description": "Умови виставлені замовником не містять достатньо інформації, щоб заявка мала сенс.",
+        "title": "Недостатньо інформації"
+    }
+}
 
 class BaseWebTest(unittest.TestCase):
     """Base Web Test to test openprocurement.relocation.api.
