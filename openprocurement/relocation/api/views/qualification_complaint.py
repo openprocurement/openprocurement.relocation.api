@@ -22,7 +22,7 @@ from openprocurement.relocation.api.validation import (
 class QualificationComplaintOwnershipResource(APIResource):
 
     @json_view(permission='create_complaint',
-        validators=(validate_complaint_accreditation_level,
+               validators=(validate_complaint_accreditation_level,
                            validate_ownership_data,))
     def post(self):
         complaint = self.request.context

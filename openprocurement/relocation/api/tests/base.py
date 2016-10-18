@@ -27,7 +27,6 @@ test_eu_bid_data = deepcopy(test_ua_bid_data)
 
 now = datetime.now()
 
-
 class BaseWebTest(unittest.TestCase):
     """Base Web Test to test openprocurement.relocation.api.
 
