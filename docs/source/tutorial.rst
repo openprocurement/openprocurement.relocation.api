@@ -109,7 +109,7 @@ Now new broker became bid owner. Check whether new owner is able to change the b
    
 New broker should provide its customer with new ``transfer`` key (received within `Transfer` object).
 
-Check whether `Transfer` object has successfuly stored bid path in ``usedFor`` property:
+Check whether `Transfer` object has successfully stored bid path in ``usedFor`` property:
 
 .. include:: tutorial/get-used-bid-transfer.http
    :code:
@@ -154,7 +154,7 @@ Now new broker became complaint owner. Check whether new owner is able to change
 
 New broker should provide its customer with new ``transfer`` key (received within `Transfer` object).
 
-Check whether `Transfer` object has successfuly stored complaint path in ``usedFor`` property:
+Check whether `Transfer` object has successfully stored complaint path in ``usedFor`` property:
 
 .. include:: tutorial/get-used-complaint-transfer.http
    :code:
@@ -198,7 +198,7 @@ Now new broker became award complaint owner. Check whether new owner is able to 
 
 New broker should provide its customer with new ``transfer`` key (received within `Transfer` object).
 
-Check whether `Transfer` object has successfuly stored complaint path in ``usedFor`` property:
+Check whether `Transfer` object has successfully stored complaint path in ``usedFor`` property:
 
 .. include:: tutorial/get-used-award-complaint-transfer.http
    :code:
@@ -206,15 +206,15 @@ Check whether `Transfer` object has successfuly stored complaint path in ``usedF
 Examples for Contract
 ----------------------
    
-Contracting ownership change
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Contract ownership change
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Let's view transfer example for  contracting transfer.
+Let's view transfer example for contract transfer.
 
 Transfer creation 
 ^^^^^^^^^^^^^^^^^
 
-At the first you must know the contract id which you want to transfer
+First of all, you must know ID of the contract that you want to transfer.
 
 Broker that is going to become new contract owner should create a `Transfer`.
 
@@ -226,7 +226,7 @@ Broker that is going to become new contract owner should create a `Transfer`.
 Changing contract's owner
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To change contract's ownership new broker should send POST request to appropriate `/contracts/id/` with `data` section containing ``id`` of `Transfer` and ``transfer`` token received from customer:
+In order to change contract's ownership new broker should send POST request to appropriate `/contracts/id/` with `data` section containing ``id`` of `Transfer` and ``transfer`` token received from customer:
 
 .. include:: tutorial/change-contract-ownership.http
    :code:
@@ -235,7 +235,7 @@ Updated ``owner`` value indicates that ownership is successfully changed.
 
 Note that new broker has to provide its customer with new ``transfer`` key (generated in `Transfer` object).
 
-After `Transfer` is applied it stores contract path in ``usedFor`` property:
+After `Transfer` is applied it stores contract path in ``usedFor`` property.
 
 .. include:: tutorial/get-used-contract-transfer.http
    :code:
