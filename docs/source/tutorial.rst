@@ -203,6 +203,7 @@ Check whether `Transfer` object has successfully stored complaint path in ``used
 .. include:: tutorial/get-used-award-complaint-transfer.http
    :code:
 
+
 Examples for Contract
 ----------------------
    
@@ -243,4 +244,49 @@ After `Transfer` is applied it stores contract path in ``usedFor`` property.
 Let's try to change the contract using ``token`` received on `Transfer` creation:
 
 .. include:: tutorial/modify-contract.http
+   :code:
+
+Examples for European procedure
+--------------------------------
+
+Qualification complaint ownership change
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+At first we must create tender for qualification 
+
+.. include:: tutorial/create-tender-for-qualification.http
+   :code:
+
+Response contains tender id and `access` section with Tender token
+
+Submit a Bid
+~~~~~~~~~~~~
+
+Let's submit a bid for qualification:
+
+.. include:: tutorial/create-first-bid-for-qualification.http
+   :code:
+
+Response contains `access` section with a `token` key that can be used to create qualification complaint.
+
+Create Transfer as in the previous examples
+
+`Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
+
+Submit Complaint
+~~~~~~~~~~~~~~~~
+
+Let's create qualification complaint 
+
+.. include:: tutorial/create-qualification-complaint.http
+   :code:
+   
+From response we take complaint ``id`` from data and complaint ``transfer`` from access
+
+Changing complaint's owner
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+New broker should send POST request to appropriate `/tenders/id/qualifications/id/complaints/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the complaint received from customer:
+
+.. include:: tutorial/change-qualification-complaint-owner.http
    :code:
