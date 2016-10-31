@@ -343,11 +343,3 @@ class EuTransferDocsTest(OpenEUOwnershipWebTest):
             response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaint_id),
                                           {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
             self.assertEqual(response.status, '200 OK')
-        
-        with open('docs/source/tutorial/modify-qualification-complaint.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/tenders/{}/qualifications/{}/complaints/{}?acc_token={}'.format(self.tender_id, qualification_id, complaint_id, transfer_tokens['token']), 
-                                           {"data": {'status': 'cancelled', 'cancellationReason': 'Important reason'}})
-            self.assertEqual(response.status, '200 OK')
-        
-        with open('docs/source/tutorial/get-used-qualification-complaint-transfer.http', 'w') as self.app.file_obj:
-            response = self.app.get('/transfers/{}'.format(transfer['id']))
