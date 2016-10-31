@@ -1,4 +1,4 @@
-PATCH /api/2.3/contracts/0bbe02412aa1409da48c1ff1c9998515?acc_token=2bed73f61da14db9abb074b234c00c69 HTTP/1.0
+PATCH /api/2.3/contracts/e4a48d436c2b4b28ad825afae096e551?acc_token=147acf9ebc0b4444b9711f062541fba4 HTTP/1.0
 Authorization: Basic YnJva2VyMzo=
 Content-Length: 64
 Content-Type: application/json
@@ -82,7 +82,7 @@ Content-Type: application/json; charset=UTF-8
       "amount": 238.0, 
       "valueAddedTaxIncluded": true
     }, 
-    "id": "0bbe02412aa1409da48c1ff1c9998515", 
+    "id": "e4a48d436c2b4b28ad825afae096e551", 
     "owner": "broker3", 
     "procuringEntity": {
       "contactPoint": {
@@ -106,8 +106,8 @@ Content-Type: application/json; charset=UTF-8
     "contractID": "UA-2016-03-18-000001-1", 
     "dateSigned": "2016-03-18T18:48:05.762961+02:00", 
     "awardID": "8481d7eb01694c25b18658036c236c5d", 
-    "dateModified": "2016-09-14T18:22:39.370530+03:00", 
-    "tender_id": "3fc5b26b56484df985b02d812b9c590b"
+    "dateModified": "2016-10-31T10:45:32.305222+02:00", 
+    "tender_id": "783943d4fa7a4637b2b42c44508e121d"
   }
 }
 

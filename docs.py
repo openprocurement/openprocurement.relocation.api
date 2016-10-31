@@ -291,9 +291,10 @@ class EuTransferDocsTest(OpenEUOwnershipWebTest):
             self.tender_id = tender['id']    
         self.set_tendering_status()
         #broker(tender owner) create bid 
-        response = self.app.post_json('/tenders/{}/bids'.format(self.tender_id), test_ua_bid_data)
-        self.assertEqual(response.status, '201 Created')
-        bid1_token = response.json['access']['token']
+        with open('docs/source/tutorial/create-first-bid-for-qualification.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/bids'.format(self.tender_id), test_ua_bid_data)
+            self.assertEqual(response.status, '201 Created')
+            bid1_token = response.json['access']['token']
         
         #broker4 create bid
         auth = self.app.authorization

@@ -1,188 +1,80 @@
-PATCH /api/2.3/tenders/2fd2898f7bbb4baeafa8d3ffaa23d99c HTTP/1.0
-Authorization: Basic Y2hyb25vZ3JhcGg6
-Content-Length: 52
+POST /api/2.3/tenders/db4a4b03e14a46f9b3be0eff875a5a08/bids HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 888
 Content-Type: application/json
 Host: api-sandbox.openprocurement.org
 DATA:
 {
   "data": {
-    "id": "2fd2898f7bbb4baeafa8d3ffaa23d99c"
+    "selfEligible": true, 
+    "selfQualified": true, 
+    "value": {
+      "amount": 500
+    }, 
+    "tenderers": [
+      {
+        "contactPoint": {
+          "name": "Державне управління справами", 
+          "telephone": "0440000000"
+        }, 
+        "identifier": {
+          "scheme": "UA-EDR", 
+          "id": "00037256", 
+          "uri": "http://www.dus.gov.ua/"
+        }, 
+        "name": "Державне управління справами", 
+        "address": {
+          "countryName": "Україна", 
+          "postalCode": "01220", 
+          "region": "м. Київ", 
+          "streetAddress": "вул. Банкова, 11, корпус 1", 
+          "locality": "м. Київ"
+        }
+      }
+    ]
   }
 }
 
-Response: 200 OK
+Response: 201 Created
 Content-Type: application/json; charset=UTF-8
+Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/db4a4b03e14a46f9b3be0eff875a5a08/bids/5f34cd32ee8a43a492715b60301b025c
 {
+  "access": {
+    "transfer": "df38c4ff4e0c43958f88bd909b9d57b2", 
+    "token": "bac59528d4f34a9498211d9398714b4d"
+  }, 
   "data": {
-    "procurementMethod": "open", 
-    "status": "active.pre-qualification", 
-    "complaintPeriod": {
-      "startDate": "2016-08-29T15:09:40.376040+03:00", 
-      "endDate": "2016-09-24T00:00:00+03:00"
-    }, 
-    "enquiryPeriod": {
-      "startDate": "2016-08-29T15:09:40.376040+03:00", 
-      "clarificationsUntil": "2016-09-22T00:00:00+03:00", 
-      "endDate": "2016-09-18T15:09:40.376040+03:00"
-    }, 
-    "submissionMethod": "electronicAuction", 
-    "procuringEntity": {
-      "kind": "general", 
-      "name": "Державне управління справами", 
-      "address": {
-        "postalCode": "01220", 
-        "countryName": "Україна", 
-        "streetAddress": "вул. Банкова, 11, корпус 1", 
-        "region": "м. Київ", 
-        "locality": "м. Київ"
-      }, 
-      "contactPoint": {
-        "name_en": "State administration", 
-        "name": "Державне управління справами", 
-        "availableLanguage": "uk", 
-        "telephone": "0440000000"
-      }, 
-      "identifier": {
-        "scheme": "UA-EDR", 
-        "legalName_en": "dus.gov.ua", 
-        "id": "00037256", 
-        "uri": "http://www.dus.gov.ua/"
-      }, 
-      "name_en": "State administration"
-    }, 
-    "owner": "broker", 
-    "title_en": "Cases for state awards", 
-    "id": "2fd2898f7bbb4baeafa8d3ffaa23d99c", 
-    "transfer_token": "a781eeacb0123068a20b3e9e78e05aae595f46dad8f7cafeae5071a0a248be687f90fa4508eefe63cf1c3409e6bbe4cb29d3450696c5594d52a7abb55878acc4", 
-    "title": "футляри до державних нагород", 
-    "qualificationPeriod": {
-      "startDate": "2016-09-28T15:09:53.074264+03:00"
-    }, 
-    "tenderID": "UA-2016-09-28-000002", 
-    "dateModified": "2016-09-28T15:09:53.080539+03:00", 
-    "numberOfBids": 2, 
-    "tenderPeriod": {
-      "startDate": "2016-08-29T15:09:40.376040+03:00", 
-      "endDate": "2016-09-28T15:09:40.376040+03:00"
-    }, 
-    "procurementMethodType": "aboveThresholdEU", 
-    "qualifications": [
-      {
-        "status": "pending", 
-        "eligible": false, 
-        "qualified": false, 
-        "bidID": "f0e9fbc6fd2b4f3a849214e77c833818", 
-        "date": "2016-09-28T15:09:53.075117+03:00", 
-        "id": "71369b1f1850493b9e69c17800916fcd"
-      }, 
-      {
-        "status": "pending", 
-        "eligible": false, 
-        "qualified": false, 
-        "bidID": "a3e3398a8beb4b228cb027d89367efb8", 
-        "date": "2016-09-28T15:09:53.075471+03:00", 
-        "id": "c6d53abe52e041cea2e90fb36d5c307b"
-      }
-    ], 
-    "date": "2016-09-28T15:09:53.080539+03:00", 
-    "minimalStep": {
-      "currency": "UAH", 
-      "amount": 35.0, 
-      "valueAddedTaxIncluded": true
-    }, 
-    "items": [
-      {
-        "description": "футляри до державних нагород", 
-        "classification": {
-          "scheme": "CPV", 
-          "description": "Cartons", 
-          "id": "44617100-9"
-        }, 
-        "description_en": "Cases for state awards", 
-        "additionalClassifications": [
-          {
-            "scheme": "ДКПП", 
-            "id": "17.21.1", 
-            "description": "папір і картон гофровані, паперова й картонна тара"
-          }
-        ], 
-        "deliveryAddress": {
-          "countryName": "Україна", 
-          "postalCode": "79000", 
-          "streetAddress": "вул. Банкова 1", 
-          "region": "м. Київ", 
-          "locality": "м. Київ"
-        }, 
-        "deliveryDate": {
-          "startDate": "2016-09-30T15:09:39.531762+03:00", 
-          "endDate": "2016-10-03T15:09:39.531762+03:00"
-        }, 
-        "id": "4196527dc4ab418c8f5413a6f2cab011", 
-        "unit": {
-          "code": "44617100-9", 
-          "name": "item"
-        }, 
-        "quantity": 5
-      }
-    ], 
-    "bids": [
-      {
-        "status": "pending", 
-        "id": "f0e9fbc6fd2b4f3a849214e77c833818", 
-        "tenderers": [
-          {
-            "contactPoint": {
-              "name": "Державне управління справами", 
-              "telephone": "0440000000"
-            }, 
-            "identifier": {
-              "scheme": "UA-EDR", 
-              "id": "00037256", 
-              "uri": "http://www.dus.gov.ua/"
-            }, 
-            "name": "Державне управління справами", 
-            "address": {
-              "postalCode": "01220", 
-              "countryName": "Україна", 
-              "streetAddress": "вул. Банкова, 11, корпус 1", 
-              "region": "м. Київ", 
-              "locality": "м. Київ"
-            }
-          }
-        ]
-      }, 
-      {
-        "status": "pending", 
-        "id": "a3e3398a8beb4b228cb027d89367efb8", 
-        "tenderers": [
-          {
-            "contactPoint": {
-              "name": "Державне управління справами", 
-              "telephone": "0440000000"
-            }, 
-            "identifier": {
-              "scheme": "UA-EDR", 
-              "id": "00037256", 
-              "uri": "http://www.dus.gov.ua/"
-            }, 
-            "name": "Державне управління справами", 
-            "address": {
-              "postalCode": "01220", 
-              "countryName": "Україна", 
-              "streetAddress": "вул. Банкова, 11, корпус 1", 
-              "region": "м. Київ", 
-              "locality": "м. Київ"
-            }
-          }
-        ]
-      }
-    ], 
+    "status": "pending", 
+    "selfEligible": true, 
     "value": {
       "currency": "UAH", 
       "amount": 500.0, 
       "valueAddedTaxIncluded": true
     }, 
-    "awardCriteria": "lowestCost"
+    "selfQualified": true, 
+    "tenderers": [
+      {
+        "contactPoint": {
+          "name": "Державне управління справами", 
+          "telephone": "0440000000"
+        }, 
+        "identifier": {
+          "scheme": "UA-EDR", 
+          "id": "00037256", 
+          "uri": "http://www.dus.gov.ua/"
+        }, 
+        "name": "Державне управління справами", 
+        "address": {
+          "postalCode": "01220", 
+          "countryName": "Україна", 
+          "streetAddress": "вул. Банкова, 11, корпус 1", 
+          "region": "м. Київ", 
+          "locality": "м. Київ"
+        }
+      }
+    ], 
+    "date": "2016-10-31T10:45:19.337716+02:00", 
+    "id": "5f34cd32ee8a43a492715b60301b025c"
   }
 }
 
