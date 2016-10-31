@@ -7,7 +7,7 @@ DATA:
 {
   "data": {
     "tenderPeriod": {
-      "endDate": "2016-10-29T15:09:39.531762"
+      "endDate": "2016-12-01T12:16:01.504061"
     }, 
     "title": "футляри до державних нагород", 
     "minimalStep": {
@@ -38,8 +38,8 @@ DATA:
           "locality": "м. Київ"
         }, 
         "deliveryDate": {
-          "startDate": "2016-09-30T15:09:39.531762", 
-          "endDate": "2016-10-03T15:09:39.531762"
+          "startDate": "2016-11-02T12:16:01.504061", 
+          "endDate": "2016-11-05T12:16:01.504061"
         }, 
         "unit": {
           "code": "44617100-9", 
@@ -82,19 +82,19 @@ DATA:
 
 Response: 201 Created
 Content-Type: application/json; charset=UTF-8
-Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/2fd2898f7bbb4baeafa8d3ffaa23d99c
+Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/a48337f6bad64080a9f69f830514e059
 {
   "access": {
-    "transfer": "0fea5e8e2e7e434a9fbea2c90c1f5328", 
-    "token": "0bc68bce83384855a589ab94299d086f"
+    "transfer": "d12134ab8951482986fd19ab55ce7799", 
+    "token": "45f54fdc44944f948dc6361acee0dcb1"
   }, 
   "data": {
     "procurementMethod": "open", 
     "status": "active.tendering", 
-    "tenderID": "UA-2016-09-28-000002", 
+    "tenderID": "UA-2016-10-31-000001", 
     "tenderPeriod": {
-      "startDate": "2016-09-28T15:09:52.095285+03:00", 
-      "endDate": "2016-10-29T15:09:39.531762+03:00"
+      "startDate": "2016-10-31T12:16:09.967388+02:00", 
+      "endDate": "2016-12-01T12:16:01.504061+02:00"
     }, 
     "title": "футляри до державних нагород", 
     "minimalStep": {
@@ -103,11 +103,11 @@ Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/2fd2898f7bbb4ba
       "valueAddedTaxIncluded": true
     }, 
     "auctionPeriod": {
-      "shouldStartAfter": "2016-12-04T00:00:00+03:00"
+      "shouldStartAfter": "2017-01-06T00:00:00+02:00"
     }, 
     "complaintPeriod": {
-      "startDate": "2016-09-28T15:09:52.095285+03:00", 
-      "endDate": "2016-10-25T00:00:00+03:00"
+      "startDate": "2016-10-31T12:16:09.967388+02:00", 
+      "endDate": "2016-11-27T00:00:00+02:00"
     }, 
     "title_en": "Cases for state awards", 
     "value": {
@@ -116,8 +116,8 @@ Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/2fd2898f7bbb4ba
       "valueAddedTaxIncluded": true
     }, 
     "submissionMethod": "electronicAuction", 
-    "date": "2016-09-28T15:09:52.228979+03:00", 
-    "dateModified": "2016-09-28T15:09:52.234333+03:00", 
+    "date": "2016-10-31T12:16:10.059425+02:00", 
+    "dateModified": "2016-10-31T12:16:10.065053+02:00", 
     "procurementMethodType": "aboveThresholdEU", 
     "procuringEntity": {
       "kind": "general", 
@@ -144,12 +144,12 @@ Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/2fd2898f7bbb4ba
       "name_en": "State administration"
     }, 
     "enquiryPeriod": {
-      "startDate": "2016-09-28T15:09:52.095285+03:00", 
-      "clarificationsUntil": "2016-10-24T15:09:39.531762+03:00", 
-      "endDate": "2016-10-19T15:09:39.531762+03:00"
+      "startDate": "2016-10-31T12:16:09.967388+02:00", 
+      "clarificationsUntil": "2016-11-24T12:16:01.504061+02:00", 
+      "endDate": "2016-11-21T12:16:01.504061+02:00"
     }, 
     "owner": "broker", 
-    "next_check": "2016-10-29T15:09:39.531762+03:00", 
+    "next_check": "2016-12-01T12:16:01.504061+02:00", 
     "items": [
       {
         "description": "футляри до державних нагород", 
@@ -174,10 +174,10 @@ Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/2fd2898f7bbb4ba
           "locality": "м. Київ"
         }, 
         "deliveryDate": {
-          "startDate": "2016-09-30T15:09:39.531762+03:00", 
-          "endDate": "2016-10-03T15:09:39.531762+03:00"
+          "startDate": "2016-11-02T12:16:01.504061+02:00", 
+          "endDate": "2016-11-05T12:16:01.504061+02:00"
         }, 
-        "id": "4196527dc4ab418c8f5413a6f2cab011", 
+        "id": "e90fed8f9eec4a2c884adef8c224db89", 
         "unit": {
           "code": "44617100-9", 
           "name": "item"
@@ -185,7 +185,7 @@ Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/2fd2898f7bbb4ba
         "quantity": 5
       }
     ], 
-    "id": "2fd2898f7bbb4baeafa8d3ffaa23d99c", 
+    "id": "a48337f6bad64080a9f69f830514e059", 
     "awardCriteria": "lowestCost"
   }
 }

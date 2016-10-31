@@ -276,9 +276,12 @@ Create Transfer as in the previous examples
 Submit Complaint
 ~~~~~~~~~~~~~~~~
 
+Let's create qualification complaint 
 
 .. include:: tutorial/create-qualification-complaint.http
    :code:
+   
+From response we take complaint ``id`` from data and complaint ``transfer`` from access
 
 Changing complaint's owner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

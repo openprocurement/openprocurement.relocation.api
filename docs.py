@@ -291,9 +291,10 @@ class EuTransferDocsTest(OpenEUOwnershipWebTest):
             self.tender_id = tender['id']    
         self.set_tendering_status()
         #broker(tender owner) create bid 
-        response = self.app.post_json('/tenders/{}/bids'.format(self.tender_id), test_ua_bid_data)
-        self.assertEqual(response.status, '201 Created')
-        bid1_token = response.json['access']['token']
+        with open('docs/source/tutorial/create-first-bid-for-qualification.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/tenders/{}/bids'.format(self.tender_id), test_ua_bid_data)
+            self.assertEqual(response.status, '201 Created')
+            bid1_token = response.json['access']['token']
         
         #broker4 create bid
         auth = self.app.authorization
@@ -342,11 +343,3 @@ class EuTransferDocsTest(OpenEUOwnershipWebTest):
             response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaint_id),
                                           {"data": {"id": transfer['id'], 'transfer': complaint_transfer}})
             self.assertEqual(response.status, '200 OK')
-        
-        with open('docs/source/tutorial/modify-qualification-complaint.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/tenders/{}/qualifications/{}/complaints/{}?acc_token={}'.format(self.tender_id, qualification_id, complaint_id, transfer_tokens['token']), 
-                                           {"data": {'status': 'cancelled', 'cancellationReason': 'Important reason'}})
-            self.assertEqual(response.status, '200 OK')
-        
-        with open('docs/source/tutorial/get-used-qualification-complaint-transfer.http', 'w') as self.app.file_obj:
-            response = self.app.get('/transfers/{}'.format(transfer['id']))
