@@ -246,47 +246,49 @@ Let's try to change the contract using ``token`` received on `Transfer` creation
 .. include:: tutorial/modify-contract.http
    :code:
 
-Examples for European procedure
---------------------------------
+Examples for OpenEU procedure 
+------------------------------
 
-Qualification complaint ownership change
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Bid qualification complaint ownership change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-At first we must create tender for qualification 
+OpenEU procedure contains bid qualification (pre-qualification) stage that allows complaints.
+
+We will use this OpenEU procedure tender as an example: 
 
 .. include:: tutorial/create-tender-for-qualification.http
    :code:
 
-Response contains tender id and `access` section with Tender token
+Response contains tender ID and `access` section with Tender ``token``.
 
 Submit a Bid
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 Let's submit a bid for qualification:
 
 .. include:: tutorial/create-first-bid-for-qualification.http
    :code:
 
-Response contains `access` section with a `token` key that can be used to create qualification complaint.
+Response contains `access` section with a ``token`` key that can be used to create bid qualification complaint.
 
-Create Transfer as in the previous examples
+Create Transfer as in the previous examples.
 
 `Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
 
-Submit Complaint
-~~~~~~~~~~~~~~~~
+Submit a Complaint
+^^^^^^^^^^^^^^^^^^
 
-Let's create qualification complaint 
+Let's create a bid qualification complaint:
 
 .. include:: tutorial/create-qualification-complaint.http
    :code:
    
-From response we take complaint ``id`` from data and complaint ``transfer`` from access
+From response we take complaint ``id`` from `data` section and complaint ``transfer`` key from `access` section.
 
 Changing complaint's owner
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-New broker should send POST request to appropriate `/tenders/id/qualifications/id/complaints/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the complaint received from customer:
+New broker should send POST request to the appropriate `/tenders/id/qualifications/id/complaints/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the complaint received from customer:
 
 .. include:: tutorial/change-qualification-complaint-owner.http
    :code:
