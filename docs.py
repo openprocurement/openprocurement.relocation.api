@@ -266,6 +266,9 @@ class TransferDocsTest(OwnershipWebTest):
             self.assertEqual(response.status, '200 OK')
             self.assertEqual(response.json['data']['description'], 'broker3 now can change the contract')
 
+        with open('docs/source/tutorial/get-used-contract-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))
+
 class EuTransferDocsTest(OpenEUOwnershipWebTest):
         
     def setUp(self):
@@ -334,10 +337,13 @@ class EuTransferDocsTest(OpenEUOwnershipWebTest):
           
         # broker4 create Transfer
         self.app.authorization = ('Basic', ('broker4', ''))
-        response = self.app.post_json('/transfers', {"data": test_transfer_data})
-        self.assertEqual(response.status, '201 Created')
-        transfer = response.json['data']
-        transfer_tokens = response.json['access']
+        with open('docs/source/tutorial/create-qualification-complaint-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/transfers', {"data": test_transfer_data})
+            self.assertEqual(response.status, '201 Created')
+            transfer = response.json['data']
+            self.assertIn('date', transfer)
+            transfer = response.json['data']
+            transfer_tokens = response.json['access']
 
         with open('docs/source/tutorial/change-qualification-complaint-owner.http', 'w') as self.app.file_obj:
             response = self.app.post_json('/tenders/{}/qualifications/{}/complaints/{}/ownership'.format(self.tender_id, qualification_id, complaint_id),

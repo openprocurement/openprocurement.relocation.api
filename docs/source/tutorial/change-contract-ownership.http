@@ -1,4 +1,4 @@
-POST /api/2.3/contracts/0bbe02412aa1409da48c1ff1c9998515/ownership HTTP/1.0
+POST /api/2.3/contracts/4dedddab60c44e2aaff6da444cb81e03/ownership HTTP/1.0
 Authorization: Basic YnJva2VyMzo=
 Content-Length: 100
 Content-Type: application/json
@@ -6,8 +6,8 @@ Host: api-sandbox.openprocurement.org
 DATA:
 {
   "data": {
-    "transfer": "6a8d3890c44041d8ba6351763efa9ef2", 
-    "id": "142974ce839c4b6cfd836abd79002f87"
+    "transfer": "ee075261c94343a399962acce973ed90",
+    "id": "413ef5e46cf4d07822bb1bb7ae06bd38"
   }
 }
 
@@ -82,7 +82,7 @@ Content-Type: application/json; charset=UTF-8
       "amount": 238.0, 
       "valueAddedTaxIncluded": true
     }, 
-    "id": "0bbe02412aa1409da48c1ff1c9998515", 
+    "id": "4dedddab60c44e2aaff6da444cb81e03",
     "owner": "broker3", 
     "procuringEntity": {
       "contactPoint": {
@@ -106,8 +106,8 @@ Content-Type: application/json; charset=UTF-8
     "contractID": "UA-2016-03-18-000001-1", 
     "dateSigned": "2016-03-18T18:48:05.762961+02:00", 
     "awardID": "8481d7eb01694c25b18658036c236c5d", 
-    "dateModified": "2016-09-14T18:22:39.266014+03:00", 
-    "tender_id": "3fc5b26b56484df985b02d812b9c590b"
+    "dateModified": "2016-11-01T11:01:31.716601+02:00",
+    "tender_id": "3773b35dabde487dbe1e04aa4bdae8bd"
   }
 }
 

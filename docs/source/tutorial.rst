@@ -271,9 +271,6 @@ Let's submit a bid for qualification:
 
 Response contains `access` section with a ``token`` key that can be used to create bid qualification complaint.
 
-Create Transfer as in the previous examples.
-
-`Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
 
 Submit a Complaint
 ^^^^^^^^^^^^^^^^^^
@@ -287,6 +284,13 @@ From response we take complaint ``id`` from `data` section and complaint ``trans
 
 Changing complaint's owner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Broker that is going to become new qualification complaint owner should create a `Transfer`.
+
+.. include:: tutorial/create-qualification-complaint-transfer.http
+   :code:
+
+`Transfer` object contains new access ``token`` and new ``transfer`` key for the object that will be transferred to new broker.
 
 New broker should send POST request to the appropriate `/tenders/id/qualifications/id/complaints/id` with `data` section containing ``id`` of `Transfer` and ``transfer`` key for the complaint received from customer:
 
