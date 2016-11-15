@@ -15,6 +15,8 @@ from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu
 from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
                                                        test_tender_negotiation_data,
                                                        test_tender_negotiation_quick_data)
+from  openprocurement.tender.competitivedialogue.tests.base import(test_tender_data_eu as test_tender_data_competitive_eu,
+                                                                   test_tender_data_ua as test_tender_data_competitive_ua)
 from openprocurement.contracting.api.tests.base import test_contract_data
 
 test_transfer_data = {}
