@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from openprocurement.relocation.api.tests.base import (OwnershipWebTest, OpenUAOwnershipWebTest,
-                                                       OpenEUOwnershipWebTest,
-                                                       BaseCompetitiveDialogUAStage2WebTest)
+from openprocurement.relocation.api.tests.base import OwnershipWebTest, OpenUAOwnershipWebTest, OpenEUOwnershipWebTest
 from openprocurement.relocation.api.tests.base import (
     test_tender_data,
     test_ua_tender_data,
@@ -14,8 +12,6 @@ from openprocurement.relocation.api.tests.base import (
     test_tender_negotiation_quick_data,
     test_tender_data_competitive_ua,
     test_tender_data_competitive_eu,
-    test_tender_stage2_data_ua,
-    test_tender_stage2_data_eu,
     test_transfer_data)
 
 
@@ -203,16 +199,6 @@ class OpenUACompatitiveTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderO
     def test_change_tender_ownership(self):
         super(OpenUACompatitiveTenderOwnershipChangeTest, self).test_change_tender_ownership()
 
-
-class OpenUACompatitiveStage2TenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest,
-                                                       BaseCompetitiveDialogUAStage2WebTest):
-    initial_data = test_tender_stage2_data_ua
-    first_owner = 'broker'
-    second_owner = 'broker3'
-    initial_auth = ('Basic', ('competitive_dialogue', ''))
-
-    def test_change_tender_ownership(self):
-        super(OpenUACompatitiveStage2TenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 class OpenEUCompatitiveTenderOwnershipChangeTest(OpenEUOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "competitiveDialogueEU"
