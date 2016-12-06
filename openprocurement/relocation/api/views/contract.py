@@ -13,7 +13,7 @@ from openprocurement.relocation.api.utils import (
     extract_transfer, update_ownership, save_transfer
 )
 from openprocurement.relocation.api.validation import (
-    validate_ownership_data, validate_contract_accreditation_level
+    validate_set_or_change_ownership_data, validate_contract_accreditation_level
 )
 
 
@@ -24,15 +24,23 @@ class ContractResource(APIResource):
 
     @json_view(permission='view_contract',
                validators=(validate_contract_accreditation_level,
-                           validate_ownership_data,))
+                           validate_set_or_change_ownership_data,))
     def post(self):
         contract = self.request.validated['contract']
         data = self.request.validated['ownership_data']
+        if contract.status != "active":
+            self.request.errors.add('body', 'data', 'Can\'t update credentials in current ({}) contract status'.format(contract.status))
+            self.request.errors.status = 403
+            return
+        if  contract.transfer_token == sha512(data.get('transfer', '')).hexdigest() or contract.tender_token == sha512(data.get('tender_token', '')).hexdigest():
+            transfer = extract_transfer(self.request, transfer_id=data['id'])
+            if data.get('tender_token') and contract.owner != transfer.owner:
+                self.request.errors.add('body', 'transfer', 'Only owner is permitted')
+                self.request.errors.status = 403
+                return
 
-        if contract.transfer_token == sha512(data['transfer']).hexdigest():
             location = self.request.route_path('Contract', contract_id=contract.id)
             location = location[len(ROUTE_PREFIX):]  # strips /api/<version>
-            transfer = extract_transfer(self.request, transfer_id=data['id'])
             if transfer.get('usedFor') and transfer.get('usedFor') != location:
                 self.request.errors.add('body', 'transfer', 'Transfer already used')
                 self.request.errors.status = 403
