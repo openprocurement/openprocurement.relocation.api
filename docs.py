@@ -10,7 +10,7 @@ from openprocurement.api.tests.base import (
     PrefixedRequestClass, test_tender_data, test_organization
 )
 from openprocurement.relocation.api.tests.base import OwnershipWebTest, test_transfer_data, OpenEUOwnershipWebTest, test_eu_tender_data, test_ua_bid_data
-from openprocurement.contracting.api.tests.base import test_contract_data
+from openprocurement.contracting.api.tests.base import test_contract_data, test_tender_token
 from webtest import TestApp
 
 
@@ -268,6 +268,35 @@ class TransferDocsTest(OwnershipWebTest):
 
         with open('docs/source/tutorial/get-used-contract-transfer.http', 'w') as self.app.file_obj:
             response = self.app.get('/transfers/{}'.format(transfer['id']))
+
+        # Create Transfer
+        with open('docs/source/tutorial/create-contract-transfer-credentials.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/transfers', {"data": {}})
+            self.assertEqual(response.status, '201 Created')
+            self.assertEqual(response.content_type, 'application/json')
+            transfer = response.json['data']
+            contract_token = response.json['access']['token']
+            new_transfer_token = response.json['access']['transfer']
+
+        # Getting access
+        with open('docs/source/tutorial/change-contract-credentials.http', 'w') as self.app.file_obj:
+            response = self.app.post_json('/contracts/{}/ownership'.format(self.contract_id),
+                                        {"data": {"id": transfer['id'], 'tender_token': test_tender_token}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertNotIn('transfer', response.json['data'])
+            self.assertNotIn('transfer_token', response.json['data'])
+            self.assertEqual('broker3', response.json['data']['owner'])
+
+        # Check Transfer is used
+        with open('docs/source/tutorial/get-used-contract-credentials-transfer.http', 'w') as self.app.file_obj:
+            response = self.app.get('/transfers/{}'.format(transfer['id']))
+
+        # Modify contract with new credentials
+        with open('docs/source/tutorial/modify-contract-credentials.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/contracts/{}?acc_token={}'.format(self.contract_id, contract_token),
+                                            {"data": {"description": "new credentials works"}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['description'], 'new credentials works')
 
 class EuTransferDocsTest(OpenEUOwnershipWebTest):
         
