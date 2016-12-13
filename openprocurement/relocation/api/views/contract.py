@@ -35,7 +35,7 @@ class ContractResource(APIResource):
         if  contract.transfer_token == sha512(data.get('transfer', '')).hexdigest() or contract.tender_token == sha512(data.get('tender_token', '')).hexdigest():
             transfer = extract_transfer(self.request, transfer_id=data['id'])
             if data.get('tender_token') and contract.owner != transfer.owner:
-                self.request.errors.add('body', 'transfer', 'Only owner is permitted')
+                self.request.errors.add('body', 'transfer', 'Only owner is allowed to generate new credentials.')
                 self.request.errors.status = 403
                 return
 

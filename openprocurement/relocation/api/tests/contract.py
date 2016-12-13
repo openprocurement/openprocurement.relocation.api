@@ -306,7 +306,7 @@ class ContractrOwnershipChangeTest(ContractOwnershipWebTest):
                                       {"data": {"id": transfer_id_1, "tender_token":test_tender_token}}, status = 403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'], [
-            {u'description': u"Only owner is permitted", u'location': u'body', u'name': u'transfer'}])
+            {u'description': u"Only owner is allowed to generate new credentials.", u'location': u'body', u'name': u'transfer'}])
 
         # terminated contract is also protected
         self.app.authorization = authorization
