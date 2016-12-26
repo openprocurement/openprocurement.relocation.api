@@ -246,6 +246,38 @@ Let's try to change the contract using ``token`` received on `Transfer` creation
 .. include:: tutorial/modify-contract.http
    :code:
 
+Contract credentials change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to get rights for future contract editing, you need to generate Transfer object and then apply this Transfer using the endpoint POST: /contracts/{id}/ownership, where id stands for contract ID.
+
+Create new transfer
+^^^^^^^^^^^^^^^^^^^
+
+Let`s generate Transfer.
+
+.. include:: tutorial/create-contract-transfer-credentials.http
+   :code:
+
+`Transfer` object contains new ``access.token`` that can be used for further contract modification and new ``transfer`` token.
+
+Changing contract's credentials
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In order to generate new contract's credentials broker should send POST request to appropriate endpoint /contracts/{id}/ownership with data section containing id of new Transfer generated previously and tender_token.
+
+.. include:: tutorial/change-contract-credentials.http
+   :code:
+
+After Transfer is applied it stores contract path in usedFor property and can`t be used for other object.
+
+.. include:: tutorial/get-used-contract-credentials-transfer.http
+   :code:
+
+Let's change the contract using ``token`` received on `Transfer` creation:
+
+.. include:: tutorial/modify-contract-credentials.http
+   :code:
 Examples for OpenEU procedure 
 ------------------------------
 
