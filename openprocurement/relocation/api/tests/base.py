@@ -269,3 +269,41 @@ class ContractOwnershipWebTest(BaseWebTest):
         # self.contract_token = response.json['access']['token']
         self.contract_id = self.contract['id']
         self.app.authorization = orig_auth
+
+class CompatitiveDialogueOwnershipWebTest(BaseWebTest):
+
+    def setUp(self):
+        super(CompatitiveDialogueOwnershipWebTest, self).setUp()
+        self.create_tender()
+
+    def set_status(self, status, extra=None):
+        data = {'status': status}
+
+        if extra:
+            data.update(extra)
+
+        tender = self.db.get(self.tender_id)
+        tender.update(apply_data_patch(tender, data))
+        self.db.save(tender)
+
+        authorization = self.app.authorization
+        self.app.authorization = ('Basic', ('chronograph', ''))
+        # response = self.app.patch_json('/tenders/{}'.format(self.tender_id), {'data': {'id': self.tender_id}})
+        response = self.app.get('/tenders/{}'.format(self.tender_id))
+        self.app.authorization = authorization
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.content_type, 'application/json')
+        return response
+
+    def create_tender(self):
+        self.app.authorization = ('Basic', ('competitive_dialogue', ''))
+        response = self.app.post_json('/tenders', {"data": test_tender_stage2_data_ua})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertIn('transfer', response.json['access'])
+        self.assertNotIn('transfer_token', response.json['data'])
+        tender = response.json['data']
+        self.tender_token = response.json['access']['token']
+        self.tender_transfer = response.json['access']['transfer']
+        self.tender_id = tender['id']
+        tender_set = set(tender)
