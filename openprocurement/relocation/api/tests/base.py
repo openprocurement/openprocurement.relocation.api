@@ -16,7 +16,11 @@ from openprocurement.tender.limited.tests.base import (test_tender_data as test_
                                                        test_tender_negotiation_data,
                                                        test_tender_negotiation_quick_data)
 from openprocurement.contracting.api.tests.base import test_contract_data, test_tender_token
-
+from openprocurement.tender.competitivedialogue.tests.base import(test_tender_data_eu as test_tender_data_competitive_eu,
+                                                                  test_tender_data_ua as test_tender_data_competitive_ua,
+                                                                  test_tender_stage2_data_eu,
+                                                                  test_tender_stage2_data_ua)
+from openprocurement.tender.competitivedialogue.tests.base import author
 test_transfer_data = {}
 
 test_bid_data = {'data': {'tenderers': [test_organization], "value": {"amount": 500}}}
