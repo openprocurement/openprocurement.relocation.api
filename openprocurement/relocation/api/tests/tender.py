@@ -63,28 +63,6 @@ class TenderOwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(transfer['usedFor'], '/tenders/' + self.tender_id)
         self.assertNotEqual(transfer_creation_date, transfer_modification_date)
 
-        # try to use already applied transfer
-        self.app.authorization = authorization
-        response = self.app.post_json('/tenders', {'data': self.initial_data})
-        tender = response.json['data']
-        access = response.json['access']
-        self.app.authorization = ('Basic', (self.second_owner, ''))
-        response = self.app.post_json('/tenders/{}/ownership'.format(tender['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']}}, status=403)
-        self.assertEqual(response.status, '403 Forbidden')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
-        ])
-        # simulate half-applied transfer activation process (i.e. transfer
-        # is successfully applied to a tender and relation is saved in transfer,
-        # but tender is not stored with new credentials)
-        transfer_doc = self.db.get(transfer['id'])
-        transfer_doc['usedFor'] = '/tenders/' + tender['id']
-        self.db.save(transfer_doc)
-        response = self.app.post_json('/tenders/{}/ownership'.format(tender['id']),
-                                      {"data": {"id": transfer['id'], 'transfer': access['transfer']}}, status=200)
-        self.assertEqual(self.second_owner, response.json['data']['owner'])
-
         # broker2 can change the tender (first tender which created in test setup)
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
                                        {"data": {"description": "broker2 now can change the tender"}})
@@ -134,11 +112,9 @@ class TenderOwnershipChangeTest(OwnershipWebTest):
         response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
                                       {"data": {"id": transfer['id'], 'transfer': new_transfer_token}}, status=403)
         self.assertEqual(response.status, '403 Forbidden')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Broker Accreditation level does not permit ownership change',
-             u'location': u'procurementMethodType', u'name': u'mode'}
-        ])
-
+        self.assertEqual(response.json['errors'][0]['description'],
+                         'Broker Accreditation level does not permit ownership change')
+        self.assertEqual(response.json['errors'][0]['location'], 'procurementMethodType')
         # set test mode and try to change ownership
         self.app.authorization = ('Basic', ('administrator', ''))
         response = self.app.patch_json('/tenders/{}'.format(self.tender_id), {'data': {'mode': 'test'}})
@@ -210,64 +186,29 @@ class OpenEUCompatitiveTenderOwnershipChangeTest(OpenEUOwnershipWebTest, TenderO
     second_owner = 'broker3'
     test_owner = 'broker3t'
     invalid_owner = 'broker1'
+
     def test_change_tender_ownership(self):
         super(OpenEUCompatitiveTenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 
-class OpenUACompatitiveDialogueStage2TenderOwnershipChangeTest(CompatitiveDialogueOwnershipWebTest):
+class OpenUACompatitiveDialogueStage2TenderOwnershipChangeTest(CompatitiveDialogueOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "competitiveDialogueUA.stage2"
     initial_data = test_tender_stage2_data_ua
     first_owner = 'broker'
-    second_owner = 'broker1'
+    second_owner = 'broker3'
+    invalid_owner = 'broker1'
+    test_owner = 'broker3t'
 
     def test_change_tender_ownership(self):
-
-        self.set_status('draft.stage2')
-
-        self.app.authorization = ('Basic', (self.second_owner, ''))
-
-        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id), {"data": {"id": 12}}, status=422)
-        self.assertEqual(response.status, '422 Unprocessable Entity')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'This field is required.', u'location': u'body', u'name': u'transfer'}
-        ])
-
-        response = self.app.get('/tenders/{}'.format(self.tender_id))
-        self.assertEqual(response.status, '200 OK')
-        self.assertEqual(response.json['data']['owner'], self.first_owner)
-
-        response = self.app.post_json('/transfers', {"data": test_transfer_data})
-        self.assertEqual(response.status, '201 Created')
-        transfer = response.json['data']
-        self.assertIn('date', transfer)
-        transfer_creation_date = transfer['date']
-        new_access_token = response.json['access']['token']
-        new_transfer_token = response.json['access']['transfer']
-
-        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
-                                      {"data": {"id": transfer['id'], 'transfer': self.tender_transfer}})
-        self.assertEqual(response.status, '200 OK')
-        self.assertNotIn('transfer', response.json['data'])
-        self.assertNotIn('transfer_token', response.json['data'])
-        self.assertEqual(self.second_owner, response.json['data']['owner'])
-
-        # tender location is stored in Transfer
-        response = self.app.get('/transfers/{}'.format(transfer['id']))
-        transfer = response.json['data']
-        transfer_modification_date = transfer['date']
-        self.assertEqual(transfer['usedFor'], '/tenders/' + self.tender_id)
-        self.assertNotEqual(transfer_creation_date, transfer_modification_date)
-
-        # broker2 can change the tender (first tender which created in test setup)
-        response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, new_access_token),
-                                       {"data": {"description": "broker2 now can change the tender"}})
-
+        super(OpenUACompatitiveDialogueStage2TenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 class OpenEUCompatitiveDialogueStage2TenderOwnershipChangeTest(OpenUACompatitiveDialogueStage2TenderOwnershipChangeTest):
     tender_type = "competitiveDialogueEU.stage2"
     initial_data = test_tender_stage2_data_eu
     first_owner = 'broker'
-    second_owner = 'broker1'
+    second_owner = 'broker3'
+    invalid_owner = 'broker1'
+    test_owner = 'broker3t'
 
     def test_change_tender_ownership(self):
         super(OpenEUCompatitiveDialogueStage2TenderOwnershipChangeTest, self).test_change_tender_ownership()
