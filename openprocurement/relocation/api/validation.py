@@ -58,9 +58,11 @@ def validate_accreditation_level(request, tender, level_name):
         request.errors.status = 403
         return
 
-
 def validate_tender_accreditation_level(request):
-    validate_accreditation_level(request, request.validated['tender'], 'create_accreditation')
+    if hasattr(request.validated['tender'], 'ownerchange_accreditation'):
+        validate_accreditation_level(request, request.validated['tender'], 'ownerchange_accreditation')
+    else:
+        validate_accreditation_level(request, request.validated['tender'], 'create_accreditation')
 
 
 def validate_bid_accreditation_level(request):

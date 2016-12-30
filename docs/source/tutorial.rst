@@ -328,3 +328,23 @@ New broker should send POST request to the appropriate `/tenders/id/qualificatio
 
 .. include:: tutorial/change-qualification-complaint-owner.http
    :code:
+
+Examples for Stage2 procedure 
+-----------------------------
+
+Tender in compatitive_dialogue procedure in stage1 during status ``complete`` will generate ``stage2TenderID`` for access to tender stage2.
+
+Changing competitive dialogue tender's owner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Changing tender's owner
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. include:: tutorial/change-tender-ownership-stage2.http
+   :code:
+
+   
+
+
+
+
