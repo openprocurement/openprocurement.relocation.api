@@ -13,7 +13,7 @@ from openprocurement.relocation.api.utils import (
     extract_transfer, update_ownership, save_transfer
 )
 from openprocurement.relocation.api.validation import (
-    validate_set_or_change_ownership_data, validate_contract_accreditation_level
+    validate_set_or_change_ownership_data, validate_contract_accreditation_level, validate_operator,
 )
 
 
@@ -24,6 +24,7 @@ class ContractResource(APIResource):
 
     @json_view(permission='view_contract',
                validators=(validate_contract_accreditation_level,
+                           validate_operator,
                            validate_set_or_change_ownership_data,))
     def post(self):
         contract = self.request.validated['contract']

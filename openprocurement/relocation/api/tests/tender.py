@@ -19,6 +19,7 @@ class TenderOwnershipChangeTest(OwnershipWebTest):
     second_owner = 'broker1'
     test_owner = 'broker1t'
     invalid_owner = 'broker3'
+    invalid_operator = 'brokerxx'
     initial_auth = ('Basic', (first_owner, ''))
 
     def test_change_tender_ownership(self):
@@ -115,6 +116,21 @@ class TenderOwnershipChangeTest(OwnershipWebTest):
         self.assertEqual(response.json['errors'], [
             {u'description': u'Broker Accreditation level does not permit ownership change',
              u'location': u'procurementMethodType', u'name': u'accreditation'}
+        ])
+
+        # try to use transfer by broker without appropriate operator
+        self.app.authorization = ('Basic', (self.invalid_operator, ''))
+
+        response = self.app.post_json('/transfers', {"data": test_transfer_data})
+        self.assertEqual(response.status, '201 Created')
+        transfer = response.json['data']
+        transfer_tokens = response.json['access']
+
+        response = self.app.post_json('/tenders/{}/ownership'.format(self.tender_id),
+                                      {"data": {"id": transfer['id'], 'transfer': new_transfer_token}}, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Tender operator does not permit ownership change', u'location': u'tender', u'name': u'operator'}
         ])
 
         # test level permits to change ownership for 'test' tenders

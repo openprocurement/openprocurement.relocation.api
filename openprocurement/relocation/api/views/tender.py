@@ -12,7 +12,7 @@ from openprocurement.relocation.api.utils import (
     extract_transfer, update_ownership, save_transfer
 )
 from openprocurement.relocation.api.validation import (
-    validate_ownership_data, validate_tender_accreditation_level
+    validate_ownership_data, validate_tender_accreditation_level, validate_operator,
 )
 
 
@@ -23,6 +23,7 @@ class TenderResource(APIResource):
 
     @json_view(permission='create_tender',
                validators=(validate_tender_accreditation_level,
+                           validate_operator,
                            validate_ownership_data,))
     def post(self):
         tender = self.request.validated['tender']

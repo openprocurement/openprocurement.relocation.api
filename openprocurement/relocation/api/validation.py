@@ -72,3 +72,10 @@ def validate_contract_accreditation_level(request):
 
 
 validate_complaint_accreditation_level = validate_bid_accreditation_level
+
+
+def validate_operator(request):
+    if request.operator != request.context.operator:
+        request.errors.add(type(request.context).__name__.lower(), 'operator', '{} operator does not permit ownership change'.format(type(request.context).__name__.title()))
+        request.errors.status = 403
+        return
