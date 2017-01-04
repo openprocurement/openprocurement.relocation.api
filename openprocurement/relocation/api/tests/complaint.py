@@ -106,6 +106,7 @@ class ComplaintOwnershipChangeTest(OwnershipWebTest):
         ])
 
 
+@unittest.skipUnless(test_ua_tender_data, "openprocurement.tender.openua not exists")
 class OpenUAComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, ComplaintOwnershipChangeTest):
     tender_type = "aboveThresholdUA"
     initial_data = test_ua_tender_data
@@ -122,6 +123,7 @@ class OpenUAComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, ComplaintOwners
         super(OpenUAComplaintOwnershipChangeTest, self).test_change_complaint_ownership()
 
 
+@unittest.skipUnless(test_uadefense_tender_data, "openprocurement.tender.openuadefense not exists")
 class OpenUADefenseComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, ComplaintOwnershipChangeTest):
     tender_type = "aboveThresholdUA.defense"
     initial_data = test_uadefense_tender_data
@@ -138,6 +140,7 @@ class OpenUADefenseComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, Complain
         super(OpenUADefenseComplaintOwnershipChangeTest, self).test_change_complaint_ownership()
 
 
+@unittest.skipUnless(test_eu_tender_data, "openprocurement.tender.openeu not exists")
 class OpenEUComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, ComplaintOwnershipChangeTest):
     tender_type = "aboveThresholdEU"
     initial_data = test_eu_tender_data

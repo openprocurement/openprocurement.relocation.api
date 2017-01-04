@@ -9,13 +9,31 @@ from uuid import uuid4
 from openprocurement.api.utils import apply_data_patch
 from openprocurement.api.design import sync_design
 from openprocurement.api.tests.base import PrefixedRequestClass, test_tender_data, test_organization
-from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
-from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
-from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
-from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
-                                                       test_tender_negotiation_data,
-                                                       test_tender_negotiation_quick_data)
-from openprocurement.contracting.api.tests.base import test_contract_data, test_tender_token
+try:
+    from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
+except ImportError:
+    test_ua_tender_data = None
+try:
+    from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
+except ImportError:
+    test_uadefense_tender_data = None
+try:
+    from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
+except ImportError:
+    test_eu_tender_data = None
+try:
+    from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
+                                                           test_tender_negotiation_data,
+                                                           test_tender_negotiation_quick_data)
+except ImportError:
+    test_tender_reporting_data = None
+    test_tender_negotiation_data = None
+    test_tender_negotiation_quick_data = None
+try:
+    from openprocurement.contracting.api.tests.base import test_contract_data, test_tender_token
+except ImportError:
+    test_contract_data = None
+    test_tender_token = None
 
 test_transfer_data = {}
 

@@ -140,6 +140,7 @@ class AwardComplaintOwnershipChangeTest(OwnershipWebTest):
         ])
 
 
+@unittest.skipUnless(test_ua_tender_data, "openprocurement.tender.openua not exists")
 class OpenUAAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, AwardComplaintOwnershipChangeTest):
     tender_type = "aboveThresholdUA"
     initial_data = test_ua_tender_data
@@ -156,6 +157,7 @@ class OpenUAAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, AwardCompl
         super(OpenUAAwardComplaintOwnershipChangeTest, self).test_change_award_complaint_ownership()
 
 
+@unittest.skipUnless(test_uadefense_tender_data, "openprocurement.tender.openuadefense not exists")
 class OpenUADefenseAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, AwardComplaintOwnershipChangeTest):
     tender_type = "aboveThresholdUA.defense"
     initial_data = test_uadefense_tender_data
@@ -172,6 +174,7 @@ class OpenUADefenseAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, Awa
         super(OpenUADefenseAwardComplaintOwnershipChangeTest, self).test_change_award_complaint_ownership()
 
 
+@unittest.skipUnless(test_eu_tender_data, "openprocurement.tender.openeu not exists")
 class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
     tender_type = "aboveThresholdEU"
     initial_data = test_eu_tender_data
@@ -321,6 +324,7 @@ class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
         ])
 
 
+@unittest.skipUnless(test_tender_negotiation_data, "openprocurement.tender.limited not exists")
 class NegotiationAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest):
     tender_type = "negotioation"
     initial_data = test_tender_negotiation_data
@@ -413,6 +417,7 @@ class NegotiationAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest):
         ])
 
 
+@unittest.skipUnless(test_tender_negotiation_quick_data, "openprocurement.tender.limited not exists")
 class NegotiationQuickAwardComplaintOwnershipChangeTest(NegotiationAwardComplaintOwnershipChangeTest):
     tender_type = "negotioation.quick"
     initial_data = test_tender_negotiation_quick_data

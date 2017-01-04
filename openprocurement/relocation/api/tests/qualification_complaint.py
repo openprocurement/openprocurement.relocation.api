@@ -2,18 +2,18 @@
 import unittest
 
 from openprocurement.relocation.api.tests.base import OwnershipWebTest, OpenUAOwnershipWebTest, OpenEUOwnershipWebTest
-from openprocurement.relocation.api.tests.base import test_uadefense_tender_data, test_eu_tender_data, test_transfer_data
+from openprocurement.relocation.api.tests.base import test_eu_tender_data, test_transfer_data
 from openprocurement.relocation.api.tests.base import test_eu_bid_data, test_organization
 
 
-
+@unittest.skipUnless(test_eu_tender_data, "openprocurement.tender.openeu not exists")
 class OpenEUQualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest):
     tender_type = "aboveThresholdEU"
     initial_data = test_eu_tender_data
     initial_bid = test_eu_bid_data
     first_owner = 'broker'
     second_provider = 'broker4'
-        
+
     def test_change_qualification_complaint_ownership(self):
 
         self.set_tendering_status()

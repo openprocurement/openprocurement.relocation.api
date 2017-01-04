@@ -162,6 +162,7 @@ class TenderOwnershipChangeTest(OwnershipWebTest):
         ])
 
 
+@unittest.skipUnless(test_ua_tender_data, "openprocurement.tender.openua not exists")
 class OpenUATenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "aboveThresholdUA"
     initial_data = test_ua_tender_data
@@ -174,6 +175,7 @@ class OpenUATenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipCha
         super(OpenUATenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 
+@unittest.skipUnless(test_uadefense_tender_data, "openprocurement.tender.openuadefense not exists")
 class OpenUADefenseTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "aboveThresholdUA.defense"
     initial_data = test_uadefense_tender_data
@@ -186,6 +188,7 @@ class OpenUADefenseTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwner
         super(OpenUADefenseTenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 
+@unittest.skipUnless(test_eu_tender_data, "openprocurement.tender.openeu not exists")
 class OpenEUTenderOwnershipChangeTest(OpenEUOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "aboveThresholdEU"
     initial_data = test_eu_tender_data
@@ -198,6 +201,7 @@ class OpenEUTenderOwnershipChangeTest(OpenEUOwnershipWebTest, TenderOwnershipCha
         super(OpenEUTenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 
+@unittest.skipUnless(test_tender_reporting_data, "openprocurement.tender.limited not exists")
 class ReportingTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "reporting"
     initial_data = test_tender_reporting_data
@@ -210,6 +214,7 @@ class ReportingTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnership
         super(ReportingTenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 
+@unittest.skipUnless(test_tender_negotiation_data, "openprocurement.tender.limited not exists")
 class NegotiationTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "negotioation"
     initial_data = test_tender_negotiation_data
@@ -222,6 +227,7 @@ class NegotiationTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnersh
         super(NegotiationTenderOwnershipChangeTest, self).test_change_tender_ownership()
 
 
+@unittest.skipUnless(test_tender_negotiation_quick_data, "openprocurement.tender.limited not exists")
 class NegotiationQuickTenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest):
     tender_type = "negotioation.quick"
     initial_data = test_tender_negotiation_quick_data

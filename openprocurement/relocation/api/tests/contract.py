@@ -11,6 +11,7 @@ from openprocurement.relocation.api.tests.base import (
 )
 
 
+@unittest.skipUnless(test_contract_data, "openprocurement.contracting.api not exists")
 class ContractrOwnershipChangeTest(ContractOwnershipWebTest):
     initial_data = test_contract_data
     first_owner = 'broker'
