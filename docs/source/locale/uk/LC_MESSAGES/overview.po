@@ -11,19 +11,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: uk\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
-"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: ../../source/overview.rst:2
 msgid "Overview"
 msgstr "Огляд"
 
-#: ../../source/overview.rst:5
 msgid "Conventions"
 msgstr "Домовленості"
 
-#: ../../source/overview.rst:6
 msgid ""
 "All API POST and PUT requests expect a top-level object with a single "
 "element in it named `data`.  Successful responses will mirror this format. "
@@ -37,7 +33,6 @@ msgstr ""
 "містить параметри запиту. Якщо створюється нова закупівля, то це ті поля, "
 "які ми хочемо встановити на самій закупівлі."
 
-#: ../../source/overview.rst:12
 msgid ""
 "If the request was successful, we will get a response code of `201` "
 "indicating the object was created.  That response will have a data field at "
@@ -48,7 +43,6 @@ msgstr ""
 "об’єкт був створений. Ця відповідь буде мати data поле на верхньому рівні, "
 "яке вміщуватиме повну інформацію про нову закупівлю, включно з ID."
 
-#: ../../source/overview.rst:17
 msgid ""
 "If something went wrong during the request, we'll get a different status "
 "code and the JSON returned will have an `errors` field at the top level "
@@ -59,11 +53,9 @@ msgstr ""
 "який при поверненні міститиме `errors` поле на верхньому рівні зі списком "
 "проблем. Ми дивимось на першу з них і видруковуємо її повідомлення."
 
-#: ../../source/overview.rst:24
 msgid "Documentation of related packages"
 msgstr "Документація пов’язаних пакетів"
 
-#: ../../source/overview.rst:28
 msgid ""
 "`Open tender procedure (OpenUA) <http://openua.api-"
 "docs.openprocurement.org/en/latest/>`_"
@@ -71,7 +63,6 @@ msgstr ""
 "`Відкриті торги (OpenUA) <http://openua.api-"
 "docs.openprocurement.org/uk/latest/>`_"
 
-#: ../../source/overview.rst:30
 msgid ""
 "`Open tender procedure with publication in English (OpenEU) <http://openeu"
 ".api-docs.openprocurement.org/en/latest/>`_"
@@ -79,7 +70,6 @@ msgstr ""
 "`Відкриті торги з публікацією англійською мовою (OpenEU) <http://openeu.api-"
 "docs.openprocurement.org/uk/latest/>`_"
 
-#: ../../source/overview.rst:32
 msgid ""
 "`Reporting, negotiation procurement procedure and negotiation procedure for "
 "the urgent need  <http://limited.api-docs.openprocurement.org/en/latest/>`_"
@@ -88,7 +78,6 @@ msgstr ""
 "переговорна процедура за нагальною потребою <http://limited.api-"
 "docs.openprocurement.org/uk/latest/>`_"
 
-#: ../../source/overview.rst:34
 msgid ""
 "`Defense open tender <http://defense.api-"
 "docs.openprocurement.org/en/latest/>`_"
@@ -96,7 +85,6 @@ msgstr ""
 "`Процедура відкритих торгів для оборонних цілей <http://defense.api-"
 "docs.openprocurement.org/uk/latest/>`_"
 
-#: ../../source/overview.rst:36
 msgid ""
 "`Contracting API interface to OpenProcurement database <http://contracting"
 ".api-docs.openprocurement.org/en/latest/>`_"
@@ -104,16 +92,14 @@ msgstr ""
 "`API для реєстрації даних пов’язаних з договором <http://contracting.api-"
 "docs.openprocurement.org/uk/latest/>`_"
 
-#: ../../source/overview.rst:26
-msgid "`OpenProcurement API <http://api-docs.openprocurement.org/en/latest/>`_"
+msgid ""
+"`OpenProcurement API <http://api-docs.openprocurement.org/en/latest/>`_"
 msgstr ""
 "`OpenProcurement API <http://api-docs.openprocurement.org/uk_UA/latest/>`_"
 
-#: ../../source/overview.rst:38
 msgid ""
 "`Document service <http://documentservice.api-"
 "docs.openprocurement.org/en/latest/>`_"
 msgstr ""
 "`Робота з документами, пакет Document service <http://documentservice.api-"
 "docs.openprocurement.org/uk/latest/>`_"
-

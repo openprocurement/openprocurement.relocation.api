@@ -6,7 +6,7 @@
 .. title:: OpenProcurement relocation api
 
 Welcome to openprocurement.relocation.api's documentation!
-=========================================================
+==========================================================
 
 Please report any problems or suggestions for improvement either via the
 `mailing list <http://groups.google.com/group/open-procurement-general>`_ or

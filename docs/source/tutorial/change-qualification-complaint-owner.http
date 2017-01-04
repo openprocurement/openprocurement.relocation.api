@@ -1,0 +1,28 @@
+POST /api/2.3/tenders/a48337f6bad64080a9f69f830514e059/qualifications/5bd908eda4a748828dd60cee85cbd7c4/complaints/9e9406f48a104502bce4f28a96ebec3f/ownership HTTP/1.0
+Authorization: Basic YnJva2VyNDo=
+Content-Length: 100
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "transfer": "e2bc2a76f0414b65b34b3ef567413119", 
+    "id": "89ad466830531e713214d0715500080a"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "status": "claim", 
+    "description": "complaint description", 
+    "title": "complaint title", 
+    "dateSubmitted": "2016-10-31T12:16:11.454427+02:00", 
+    "complaintID": "UA-2016-10-31-000001.1", 
+    "date": "2016-10-31T12:16:11.454410+02:00", 
+    "type": "claim", 
+    "id": "9e9406f48a104502bce4f28a96ebec3f"
+  }
+}
+

@@ -15,7 +15,7 @@ from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu
 from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
                                                        test_tender_negotiation_data,
                                                        test_tender_negotiation_quick_data)
-from openprocurement.contracting.api.tests.base import test_contract_data
+from openprocurement.contracting.api.tests.base import test_contract_data, test_tender_token
 
 test_transfer_data = {}
 
@@ -26,7 +26,6 @@ test_uadefense_bid_data = deepcopy(test_ua_bid_data)
 test_eu_bid_data = deepcopy(test_ua_bid_data)
 
 now = datetime.now()
-
 
 class BaseWebTest(unittest.TestCase):
     """Base Web Test to test openprocurement.relocation.api.
