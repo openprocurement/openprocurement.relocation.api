@@ -7,6 +7,8 @@ from openprocurement.relocation.api.tests.base import (
     test_ua_tender_data,
     test_uadefense_tender_data,
     test_eu_tender_data,
+    test_tender_data_competitive_ua,
+    test_tender_data_competitive_eu,
     test_transfer_data)
 from openprocurement.relocation.api.tests.base import (
     test_bid_data,
@@ -136,6 +138,38 @@ class OpenUADefenseComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, Complain
 
     def test_change_complaint_ownership(self):
         super(OpenUADefenseComplaintOwnershipChangeTest, self).test_change_complaint_ownership()
+
+
+class OpenUACompetitiveDialogueComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, ComplaintOwnershipChangeTest):
+    tender_type = "competitiveDialogueUA"
+    initial_data = test_tender_data_competitive_ua
+    initial_bid = test_bid_data
+    first_owner = 'broker'
+    owner2 = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    First_provider = 'broker'
+    second_provider = 'broker4'
+    invalid_provider = 'broker2'
+
+    def test_change_complaint_ownership(self):
+        super(OpenUACompetitiveDialogueComplaintOwnershipChangeTest, self).test_change_complaint_ownership()
+
+
+class OpenEUCompetitiveDialogueComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, ComplaintOwnershipChangeTest):
+    tender_type = "competitiveDialogueEU"
+    initial_data = test_eu_tender_data
+    initial_bid = test_eu_bid_data
+    first_owner = 'broker'
+    owner2 = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    First_provider = 'broker'
+    second_provider = 'broker4'
+    invalid_provider = 'broker2'
+
+    def test_change_complaint_ownership(self):
+        super(OpenEUCompetitiveDialogueComplaintOwnershipChangeTest, self).test_change_complaint_ownership()
 
 
 class OpenEUComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, ComplaintOwnershipChangeTest):
