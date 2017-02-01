@@ -16,7 +16,12 @@ from openprocurement.tender.limited.tests.base import (test_tender_data as test_
                                                        test_tender_negotiation_data,
                                                        test_tender_negotiation_quick_data)
 from openprocurement.contracting.api.tests.base import test_contract_data, test_tender_token
-
+from openprocurement.tender.competitivedialogue.tests.base import(test_tender_stage2_data_eu,
+                                                                  test_tender_stage2_data_ua,
+                                                                  test_access_token_stage1)
+                                                                  
+from openprocurement.tender.competitivedialogue.tests.base import author
+from openprocurement.tender.competitivedialogue.tests.base import BaseCompetitiveDialogWebTest
 test_transfer_data = {}
 
 test_bid_data = {'data': {'tenderers': [test_organization], "value": {"amount": 500}}}
@@ -265,3 +270,22 @@ class ContractOwnershipWebTest(BaseWebTest):
         # self.contract_token = response.json['access']['token']
         self.contract_id = self.contract['id']
         self.app.authorization = orig_auth
+
+
+class CompatitiveDialogueOwnershipWebTest(BaseWebTest, BaseCompetitiveDialogWebTest):
+
+    def setUp(self):
+        super(CompatitiveDialogueOwnershipWebTest, self).setUp()
+        self.create_tender()
+
+    def create_tender(self):
+        self.app.authorization = ('Basic', ('competitive_dialogue', ''))
+        self.data = deepcopy(self.initial_data)
+        response = self.app.post_json('/tenders', {"data": self.data})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertIn('transfer', response.json['access'])
+        self.assertNotIn('transfer_token', response.json['data'])
+        tender1 = response.json['data']
+        self.tender_id = tender1['id']
+        self.set_status('draft.stage2')
