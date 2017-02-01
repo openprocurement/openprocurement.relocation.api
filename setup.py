@@ -15,8 +15,8 @@ test_requires = requires + [
     'openprocurement.tender.openuadefense',
     'openprocurement.tender.openeu',
     'openprocurement.tender.limited',
-    'openprocurement.tender.competitivedialogue',
     'openprocurement.contracting.api',
+    'openprocurement.tender.competitivedialogue',
 ]
 
 docs_requires = requires + [

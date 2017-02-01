@@ -7,6 +7,8 @@ from openprocurement.relocation.api.tests.base import (
     test_ua_tender_data,
     test_uadefense_tender_data,
     test_eu_tender_data,
+    test_tender_data_competitive_ua,
+    test_tender_data_competitive_eu,
     test_tender_stage2_data_ua,
     test_tender_stage2_data_eu,
     test_transfer_data)
@@ -125,6 +127,22 @@ class OpenUADefenseBidOwnershipChangeTest(OpenUAOwnershipWebTest, BidOwnershipCh
         super(OpenUADefenseBidOwnershipChangeTest, self).test_change_bid_ownership()
 
 
+class OpenUACompatitiveDialogueBidOwnershipChangeTest(OpenUAOwnershipWebTest, BidOwnershipChangeTest):
+    tender_type = "competitiveDialogueUA"
+    initial_data = test_tender_data_competitive_ua
+    initial_bid = test_ua_bid_data
+    first_owner = 'broker'
+    second_owner = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    first_provider = 'broker'
+    second_provider = 'broker4'
+    invalid_provider = 'broker2'
+
+    def test_change_bid_ownership(self):
+        super(OpenUACompatitiveDialogueBidOwnershipChangeTest, self).test_change_bid_ownership()
+
+
 class OpenUACompatitiveDialogueStage2BidOwnershipChangeTest(OpenUAOwnershipWebTest):
     tender_type = "competitiveDialogueUA.stage2"
     initial_data = test_tender_stage2_data_ua
@@ -199,6 +217,22 @@ class OpenUACompatitiveDialogueStage2BidOwnershipChangeTest(OpenUAOwnershipWebTe
         self.assertEqual(response.json['errors'], [
             {u'description': u'Transfer already used', u'location': u'body', u'name': u'transfer'}
         ])
+
+
+class OpenEUCompatitiveDialogueBidOwnershipChangeTest(OpenEUOwnershipWebTest, BidOwnershipChangeTest):
+    tender_type = "competitiveDialogueEU"
+    initial_data = test_tender_data_competitive_ua
+    initial_bid = test_eu_bid_data
+    first_owner = 'broker'
+    second_owner = 'broker3'
+    test_owner = 'broker3t'
+    invalid_owner = 'broker1'
+    first_provider = 'broker'
+    second_provider = 'broker4'
+    invalid_provider = 'broker2'
+
+    def test_change_bid_ownership(self):
+        super(OpenEUCompatitiveDialogueBidOwnershipChangeTest, self).test_change_bid_ownership()
 
 
 class OpenEUCompatitiveDialogueStage2BidOwnershipChangeTest(OpenEUOwnershipWebTest,
