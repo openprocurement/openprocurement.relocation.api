@@ -60,7 +60,9 @@ def validate_accreditation_level(request, tender, level_name):
 
 
 def validate_tender_accreditation_level(request):
-    validate_accreditation_level(request, request.validated['tender'], 'create_accreditation')
+    validate_accreditation_level(request, request.validated['tender'], 'transfer_accreditation' if hasattr(request.validated['tender'],
+     'transfer_accreditation') else 'create_accreditation')
+
 
 
 def validate_bid_accreditation_level(request):
