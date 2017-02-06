@@ -64,7 +64,6 @@ def validate_tender_accreditation_level(request):
      'transfer_accreditation') else 'create_accreditation')
 
 
-
 def validate_bid_accreditation_level(request):
     validate_accreditation_level(request, request.validated['tender'], 'edit_accreditation')
 
