@@ -1,0 +1,13 @@
+POST /api/2.3/tenders/d2344d0c92f44741b5d0772abb62bf64/ownership HTTP/1.0
+Authorization: Basic YnJva2VyMzo=
+Content-Length: 100
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "transfer": "a94cad539be54d208d905ddc12e410f8", 
+    "id": "e89c01f817fb9640daa2244a7c0393e3"
+  }
+}
+
