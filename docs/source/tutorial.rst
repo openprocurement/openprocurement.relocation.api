@@ -329,18 +329,18 @@ New broker should send POST request to the appropriate `/tenders/id/qualificatio
 .. include:: tutorial/change-qualification-complaint-owner.http
    :code:
 
-Examples for Tender in Сompetitive Dialogue procedure
------------------------------------------------------
+Examples for Сompetitive Dialogue procedure
+-------------------------------------------
 
 Stage1 procedure
 ~~~~~~~~~~~~~~~~
 
-Changing owner of tender in stage 1 is familiar to Open UA or Open EU tenders procedure.
+Changing owner of tender in stage 1 is similar to Open UA or Open EU tenders procedure.
 
 Stage2 procedure
 ~~~~~~~~~~~~~~~~
 
-Tender in Compatitive Dialogue procedure in stage 1 after status ``complete`` will generate ``stage2TenderID`` for access to tender stage2. Owner should make PATCH request to `tender/id/credentials`  where `id`  is ``stage2TenderID``. Response contains `access` section where `token` will be a new ``access`` token and `transfer` will be ``transfer`` token. To change tender owner we need this ``transfer`` token.
+To change second stage tender owner, we need transfer token received during getting access to second stage tender. `Get token for second stage <http://openprocurementtendercompetitivedialogue.readthedocs.io/en/latest/tutorial.html#get-token-for-second-stage>`
 
 Transfer creation
 ^^^^^^^^^^^^^^^^^
@@ -357,7 +357,7 @@ Changing tender's stage2 owner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Pay attention that only broker with appropriate accreditation level can become new owner. Otherwise broker will be forbidden from this action.
 
-To change tender's ownership new broker should send POST request to appropriate `/tenders/id/ownership`  with `data` section containing ``id`` of `Transfer` and ``transfer`` token received from previous PATCH request to  `tender/id/credentials`.
+To change tender's ownership new broker should send POST request to appropriate `/tenders/<tender_id>/ownership`  with `data` section containing ``id`` of `Transfer` and ``transfer`` token received from previous PATCH request to  `tender/<tender_id>/credentials?acc_token=<acc_token>`.
 
 .. include:: tutorial/change-tender-ownership-stage2.http
    :code:
