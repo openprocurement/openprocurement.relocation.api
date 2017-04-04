@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0+px.2'
+version = '1.0+px.3'
 
 requires = [
     'couchdb',
